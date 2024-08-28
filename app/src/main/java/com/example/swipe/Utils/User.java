@@ -1,14 +1,6 @@
 package com.example.swipe.Utils;
 
 import java.io.Serializable;
-
-/**
- * DatingApp
- * https://github.com/quintuslabs/DatingApp
- * Created on 25-sept-2018.
- * Created by : Santosh Kumar Dash:- http://santoshdash.epizy.com
- */
-
 public class User implements Serializable {
     private String user_id;
     private String phone_number;

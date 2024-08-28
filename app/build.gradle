@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -24,13 +24,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
@@ -47,5 +46,14 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
     implementation("com.google.firebase:firebase-analytics")
 
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    // Updated Glide version
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

@@ -2,13 +2,6 @@ package com.example.swipe.Utils;
 
 import java.util.Calendar;
 
-/**
- * Grocery App
- * https://github.com/quintuslabs/GroceryStore
- * Created on 18-Feb-2019.
- * Created by : Santosh Kumar Dash:- http://santoshdash.epizy.com
- */
-
 public class CalculateAge {
     private int age;
 
