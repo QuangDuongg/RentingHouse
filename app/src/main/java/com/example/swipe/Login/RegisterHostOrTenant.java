@@ -91,6 +91,7 @@ public class RegisterHostOrTenant extends AppCompatActivity {
         String defaultPhoto = host ? "defaulthost" : "defaulttenant";
         user.setProfileImageUrl(defaultPhoto);
 
+        //----------------------------------------Firebase----------------------------------------
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("password", password);
         intent.putExtra("classUser", user);
