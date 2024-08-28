@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "623383516009",
+    "project_id": "authenticalrentinghouse",
+    "storage_bucket": "authenticalrentinghouse.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623383516009:android:0b15012c82e7fedaf763f8",
+        "android_client_info": {
+          "package_name": "com.example.swipe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfokbxkY5-_60HGschlm8HqaA_Vbw2ObU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

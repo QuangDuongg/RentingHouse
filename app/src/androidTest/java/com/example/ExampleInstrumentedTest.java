@@ -1,4 +1,4 @@
-package com.example.swipe;
+package com.example;
 
 import android.content.Context;
 
