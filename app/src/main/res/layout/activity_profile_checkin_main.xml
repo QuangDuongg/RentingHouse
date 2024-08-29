@@ -10,11 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_close_black_24dp" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,14 +34,27 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/monkey" />
 
-                <Button
+                <ImageButton
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/ic_down_arrow" />
+                    android:background="@drawable/ic_down_arrow"
+                    android:contentDescription="TODO" />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="358dp"
+                    android:layout_marginTop="37dp"
+                    android:layout_marginEnd="23dp"
+                    android:layout_marginRight="23dp"
+                    android:layout_marginBottom="664dp"
+                    android:background="@drawable/ic_close_black_24dp"
+                    android:contentDescription="TODO"
+                    android:foregroundGravity="center" />
             </RelativeLayout>
 
             <TextView
@@ -151,5 +160,6 @@
             </LinearLayout>
 
         </LinearLayout>
+
     </RelativeLayout>
 </ScrollView>
