@@ -1,0 +1,13 @@
+* Sẽ làm
+- Firebase cho Authentic, Push Image lên
+- Chia ra hai mode rõ rang
+- Host có thể cho nhiều nhà thuê cùng lúc
+- Cần Update nhiều thông tin hơn cho Tenant ( Tiêu chí tìm kiếm)
+- Bố trí cách xem thông tin before mathching hợp lý
+- Messenger
+- Thay đổi UI cho đẹp hơn
+
+* Đã làm
+- Giao diện đơn sơ Swipe
+- Giao diện gần như hoàn chỉnh của Host Profile
+* Đang làm
