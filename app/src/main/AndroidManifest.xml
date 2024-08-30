@@ -15,6 +15,18 @@
         android:theme="@style/Theme.Swipe"
         tools:targetApi="31">
         <activity
+            android:name=".Mode.TenantMode"
+            android:exported="false" />
+        <activity
+            android:name=".Mode.HostMode"
+            android:exported="false" />
+        <activity
+            android:name=".Mode.TenantMode"
+            android:exported="false" />
+        <activity
+            android:name="Mode.HostMode"
+            android:exported="false" />
+        <activity
             android:name=".Introduction.IntroductionMain"
             android:exported="false" />
         <activity
