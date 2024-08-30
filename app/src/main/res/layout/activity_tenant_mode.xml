@@ -1,16 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- activity_tenant_mode.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:padding="16dp"
     tools:context=".Mode.TenantMode">
-    <TextView
+
+    <!-- Button for Personal Info -->
+    <Button
+        android:id="@+id/btn_personal_info"
         android:layout_width="wrap_content"
-        android:text="Here is tenant mode"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textSize="25sp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="Personal Info"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp" />
+
+    <!-- Button for Message -->
+    <Button
+        android:id="@+id/btn_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp" />
+
+    <!-- Search bar for selecting city and district -->
+    <LinearLayout
+        android:id="@+id/search_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/btn_personal_info"
+        android:layout_marginTop="30dp">
+
+        <!-- Search bar for City -->
+        <EditText
+            android:id="@+id/search_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select City"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text" />
+
+        <!-- Search bar for District -->
+        <EditText
+            android:id="@+id/search_district"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select District"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginTop="10dp" />
+
+        <!-- Search Button -->
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
+
+    </LinearLayout>
+
 </RelativeLayout>
