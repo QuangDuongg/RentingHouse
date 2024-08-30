@@ -45,10 +45,10 @@
             android:name=".Login.RegisterBasicInfo"
             android:exported="false" /> <!-- Login Activity - Launcher Activity -->
         <activity
-            android:name=".Login.Login"
+            android:name=".Main.MainActivity"
             android:exported="false" /> <!-- MainActivity -->
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".Login.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
