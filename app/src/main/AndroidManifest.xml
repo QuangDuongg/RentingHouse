@@ -15,6 +15,18 @@
         android:theme="@style/Theme.Swipe"
         tools:targetApi="31">
         <activity
+            android:name=".Mode.TenantMode"
+            android:exported="false" />
+        <activity
+            android:name=".Mode.HostMode"
+            android:exported="false" />
+        <activity
+            android:name=".Mode.TenantMode"
+            android:exported="false" />
+        <activity
+            android:name="Mode.HostMode"
+            android:exported="false" />
+        <activity
             android:name=".Introduction.IntroductionMain"
             android:exported="false" />
         <activity
@@ -45,10 +57,10 @@
             android:name=".Login.RegisterBasicInfo"
             android:exported="false" /> <!-- Login Activity - Launcher Activity -->
         <activity
-            android:name=".Login.Login"
+            android:name=".Main.MainActivity"
             android:exported="false" /> <!-- MainActivity -->
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".Login.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
