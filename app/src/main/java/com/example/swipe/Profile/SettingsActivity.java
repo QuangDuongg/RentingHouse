@@ -24,9 +24,9 @@ import android.widget.TextView;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
-    SeekBar distance;
+    SeekBar distance, budget;
     SwitchCompat man, woman;
-    TextView gender, distance_text, age_rnge;
+    TextView gender, distance_text, budget_text, age_rnge;
 
 
     @Override
@@ -39,14 +39,49 @@ public class SettingsActivity extends AppCompatActivity {
         toolbar.setText("Profile");
         ImageButton back = findViewById(R.id.back);
         distance = findViewById(R.id.distance);
+        budget = findViewById(R.id.budget);
         man = findViewById(R.id.switch_man);
         woman = findViewById(R.id.switch_woman);
         distance_text = findViewById(R.id.distance_text);
+        budget_text = findViewById(R.id.budget_text);
 
         distance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 distance_text.setText(progress + " Km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int bound_progress = progress - progress%100;
+                String manip_budget_text = String.valueOf(bound_progress);
+                manip_budget_text += "000";
+                String tmp = manip_budget_text;
+                manip_budget_text = "";
+                int cnt = 0;
+                for (int i = tmp.length() - 1; i >=0; i--)
+                {
+                    if(cnt == 3) {
+                        manip_budget_text = " " + manip_budget_text;
+                        cnt = 0;
+                    }
+                    cnt++;
+                    manip_budget_text = Character.toString(tmp.charAt(i)) + manip_budget_text ;
+                }
+                manip_budget_text += "VND";
+                budget_text.setText(manip_budget_text);
             }
 
             @Override
