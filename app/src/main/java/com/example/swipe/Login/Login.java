@@ -2,6 +2,7 @@ package com.example.swipe.Login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -79,6 +80,13 @@ public class Login extends AppCompatActivity {
                                         // Sign in success, now check the user's role
                                         Log.d(TAG, "signInWithEmail:success");
                                         String userId = mAuth.getCurrentUser().getUid();
+
+                                        // Lưu userId vào SharedPreferences
+                                        SharedPreferences sharedPref = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putString("USER_ID", userId);
+                                        editor.apply(); // hoặc editor.commit(); nếu bạn muốn đồng bộ ngay lập tức
+
                                         checkUserRole(userId);
                                     } else {
                                         // If sign in fails, display a message to the user

@@ -39,4 +39,31 @@
         <item>@drawable/img3</item>
         <item>@drawable/img4</item>
     </integer-array>
+    <string-array name="districts">
+        <item>Quan 1</item>
+        <item>Quan 2</item>
+        <item>Quan 3</item>
+        <item>Quan 4</item>
+        <item>Quan 5</item>
+        <item>Quan 6</item>
+        <item>Quan 7</item>
+        <item>Quan 8</item>
+        <item>Quan 9</item>
+        <item>Quan 10</item>
+        <item>Quan 11</item>
+        <item>Quan 12</item>
+        <item>Quan Binh Thanh</item>
+        <item>Quan Phu Nhuan</item>
+        <item>Quan Go Vap</item>
+        <item>Quan Tan Binh</item>
+        <item>Quan Tan Phu</item>
+        <item>Quan Binh Tan</item>
+        <item>Quan Thu Đuc</item>
+        <item>Quan Binh Chanh</item>
+        <item>Quan Nha Be</item>
+        <item>Quan Can Gio</item>
+        <item>Quan Hoc Mon</item>
+        <item>Quan Cu Chi</item>
+    </string-array>
+
 </resources>
