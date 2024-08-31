@@ -23,12 +23,6 @@
             android:name=".Mode.HostMode"
             android:exported="false" />
         <activity
-            android:name=".Mode.TenantMode"
-            android:exported="false" />
-        <activity
-            android:name="Mode.HostMode"
-            android:exported="false" />
-        <activity
             android:name=".Introduction.IntroductionMain"
             android:exported="false" />
         <activity
@@ -70,16 +64,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Login Activity - Launcher Activity -->
-        <activity
-            android:name=".Login.Login"
-            android:exported="false" >
-
-        </activity> <!-- MainActivity -->
-        <activity
-            android:name=".Main.MainActivity"
-            android:exported="false">
-
-        </activity>
     </application>
 
 </manifest>
