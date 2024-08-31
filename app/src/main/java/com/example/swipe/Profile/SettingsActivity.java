@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.swipe.Introduction.IntroductionMain;
 import com.example.swipe.R;
+import com.example.swipe.Utils.SearchFilter;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,13 +34,14 @@ public class SettingsActivity extends AppCompatActivity {
     SwitchCompat man, woman;
     List <SwitchCompat> location;
     TextView distance_text, budget_text;
+    SearchFilter searchFilter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
+        searchFilter = SearchFilter.getInstance();
 
         TextView toolbar = findViewById(R.id.toolbartag);
         toolbar.setText("Profile");
@@ -62,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
             switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    searchFilter.setIsDistrictIndex(index, isChecked);
                     if (isChecked) {
                         location.get(index).setChecked(true);
                     }
@@ -76,6 +79,8 @@ public class SettingsActivity extends AppCompatActivity {
                 if (isChecked) {
                     for(int i = 0; i < location.size(); i++)
                     {
+                        if(i >= 1)
+                            searchFilter.setIsDistrictIndex(i, true);
                         location.get(i).setChecked(true);
                     }
                     Handler handler = new Handler();
@@ -102,6 +107,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 distance_text.setText(progress + " Km");
+                searchFilter.setMaxDistance(progress);
             }
 
             @Override
@@ -118,7 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
         budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int bound_progress = progress - progress%100;
+                int bound_progress = progress - progress % 100;
                 String manip_budget_text = String.valueOf(bound_progress);
                 manip_budget_text += "000";
                 String tmp = manip_budget_text;
@@ -135,6 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 manip_budget_text += "VND";
                 budget_text.setText(manip_budget_text);
+                searchFilter.setBudget(bound_progress);
             }
 
             @Override
@@ -151,14 +158,17 @@ public class SettingsActivity extends AppCompatActivity {
         man.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                searchFilter.setForMan(isChecked);
                 if (isChecked) {
                     man.setChecked(true);
                 }
+                else searchFilter.setForMan(false);
             }
         });
         woman.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                searchFilter.setForWoman(isChecked);
                 if (isChecked) {
                     woman.setChecked(true);
                 }
