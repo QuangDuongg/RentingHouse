@@ -58,12 +58,12 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/name_main"
+                android:id="@+id/District_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
-                android:text="Victoria, 19"
+                android:text="District 5"
                 android:textColor="@color/textColor"
                 android:textSize="25sp" />
 
@@ -75,29 +75,29 @@
                 android:layout_marginBottom="10dp"
                 android:drawableLeft="@drawable/ic_location"
                 android:gravity="center"
-                android:text="5 miles away"
+                android:text="2 km away"
                 android:textSize="18sp" />
 
 
             <TextView
-                android:id="@+id/bio_beforematch"
+                android:id="@+id/address_beforematch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Something about Victoria"
+                android:text="75 Nguyen Van Cu Street"
                 android:textSize="16sp" />
 
 
             <TextView
-                android:id="@+id/interests_beforematch"
+                android:id="@+id/price_beforematch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Dancing, Traveling, Love"
+                android:text="6 000 000 VND"
                 android:textSize="16sp" />
 
 

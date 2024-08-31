@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.example.swipe.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,31 +40,31 @@ public class PhotoAdapter extends ArrayAdapter<Cards> {
         ImageView image = convertView.findViewById(R.id.image);
         ImageButton btnInfo = convertView.findViewById(R.id.checkInfoBeforeMatched);
 
-        name.setText(card_item.getName() + ", " + card_item.getAge());
+        name.setText(card_item.getDistrict() + ", " + card_item.getDistance() + " km");
         btnInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ProfileCheckinMain.class);
-                intent.putExtra("name", card_item.getName() + ", " + card_item.getAge());
-                intent.putExtra("photo", card_item.getProfileImageUrl());
-                intent.putExtra("bio", card_item.getBio());
-                intent.putExtra("interest", card_item.getInterest());
+                intent.putExtra("district", card_item.getDistrict() + ", " + card_item.getDistance());
+                if(card_item.isAnyImageRoom()) {
+                    ArrayList<String> roomImageUrls = new ArrayList<>(card_item.getRoomImageUrl());
+                    intent.putStringArrayListExtra("photo", roomImageUrls);
+                }
+                intent.putExtra("address", card_item.getAddress());
+                intent.putExtra("price", card_item.getPrice());
                 intent.putExtra("distance", card_item.getDistance());
                 mContext.startActivity(intent);
             }
         });
 
-        name.setText(card_item.getName() + ", " + card_item.getAge());
+        name.setText(card_item.getDistrict() + ", " + card_item.getDistance());
 
-        switch (card_item.getProfileImageUrl()) {
-            case "defaultFemale":
-                Glide.with(getContext()).load(R.drawable.default_woman).into(image);
-                break;
-            case "defaultMale":
+        switch (card_item.getRoomImageUrl().get(0)) {
+            case "defaultRoom":
                 Glide.with(getContext()).load(R.drawable.default_man).into(image);
                 break;
             default:
-                Glide.with(getContext()).load(card_item.getProfileImageUrl()).into(image);
+                Glide.with(getContext()).load(card_item.getRoomImageUrl().get(0)).into(image);
                 break;
         }
 

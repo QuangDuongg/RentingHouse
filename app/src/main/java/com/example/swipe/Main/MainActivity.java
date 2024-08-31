@@ -58,9 +58,22 @@ public class MainActivity extends Activity {
 
         setupTopNavigationView();
 
-
+        /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
-        Cards cards = new Cards("1", "Swati Tripathy", 21, "https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg", "Simple and beautiful Girl", "Acting", 200);
+        insertFromFireBase();
+
+        arrayAdapter = new PhotoAdapter(this, R.layout.item, rowItems);
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        checkRowItem();
+        updateSwipeCard();
+    }
+
+    private void insertFromFireBase() {
+        ArrayList <String> imgRoom = new ArrayList<>();
+        imgRoom.add("defaultRoom");
+        Cards cards = new Cards("1", "District 5", imgRoom, "75 Nguyen Van Cu", 6000, 2);
+        rowItems.add(cards);
+      /*  Cards cards = new Cards("1", "Swati Tripathy", 21, "https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg", "Simple and beautiful Girl", "Acting", 200);
         rowItems.add(cards);
         cards = new Cards("2", "Ananaya Pandy", 20, "https://i0.wp.com/profilepicturesdp.com/wp-content/uploads/2018/06/beautiful-indian-girl-image-for-profile-picture-8.jpg", "cool Minded Girl", "Dancing", 800);
         rowItems.add(cards);
@@ -73,12 +86,7 @@ public class MainActivity extends Activity {
         cards = new Cards("6", "Dikshya Agarawal", 21, "https://pbs.twimg.com/profile_images/485824669732200448/Wy__CJwU.jpeg", "Simple and beautiful Girl", "Sleeping", 700);
         rowItems.add(cards);
         cards = new Cards("7", "Sudeshna Roy", 19, "https://talenthouse-res.cloudinary.com/image/upload/c_fill,f_auto,h_640,w_640/v1411380245/user-415406/submissions/hhb27pgtlp9akxjqlr5w.jpg", "Papa's Pari", "Art", 5000);
-        rowItems.add(cards);
-
-        arrayAdapter = new PhotoAdapter(this, R.layout.item, rowItems);
-
-        checkRowItem();
-        updateSwipeCard();
+        rowItems.add(cards);*/
     }
 
     private void checkRowItem() {
@@ -187,13 +195,13 @@ public class MainActivity extends Activity {
         if (rowItems.size() != 0) {
             Cards card_item = rowItems.get(0);
 
-            String userId = card_item.getUserId();
+            // String userId = card_item.getUserId();
 
             rowItems.remove(0);
             arrayAdapter.notifyDataSetChanged();
 
             Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
-            btnClick.putExtra("url", card_item.getProfileImageUrl());
+            btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
             startActivity(btnClick);
         }
     }
@@ -202,7 +210,7 @@ public class MainActivity extends Activity {
         if (rowItems.size() != 0) {
             Cards card_item = rowItems.get(0);
 
-            String userId = card_item.getUserId();
+            // String userId = card_item.getUserId();
 
             //check matches
 
@@ -210,7 +218,7 @@ public class MainActivity extends Activity {
             arrayAdapter.notifyDataSetChanged();
 
             Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
-            btnClick.putExtra("url", card_item.getProfileImageUrl());
+            btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
             startActivity(btnClick);
         }
     }
