@@ -3,9 +3,11 @@ package com.example.swipe.Main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,18 +49,22 @@ public class ProfileCheckinMain extends AppCompatActivity {
         String address = intent.getStringExtra("address");
         int price = intent.getIntExtra("price", 1000);
         int distance = intent.getIntExtra("distance", 2);
-        String append = (distance == 1) ? "Km away" : "Km  away";
         // lack of photos
 
-        profileDistance.setText(distance + " " + append);
+        Log.d("ProfileCheckinMain", "Check Distance");
+        profileDistance.setText(String.valueOf(distance) + " Km away");
+        Log.d("ProfileCheckinMain", "Check District");
         profileDistrict.setText(district);
+        Log.d("ProfileCheckinMain", "Check Address");
         profileAddress.setText(address);
-        profilePrice.setText(price);
-
+        Log.d("ProfileCheckinMain", "Check Price");
+        Log.d("ProfileCheckinMain", String.valueOf(price));
+        profilePrice.setText(String.valueOf(price));
+        Log.d("ProfileCheckinMain", "Check Photo");
         profileImageUrl = intent.getStringArrayListExtra("photo");
         switch (profileImageUrl.get(0)) {
             case "defaultRoom":
-                Glide.with(mContext).load(R.drawable.default_woman).into(profileImage);
+                Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
                 break;
             default:
                 Glide.with(mContext).load(profileImageUrl).into(profileImage);

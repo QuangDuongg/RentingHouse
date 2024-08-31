@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.swipe.R;
 import com.example.swipe.Utils.PulsatorLayout;
+import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
@@ -69,9 +70,11 @@ public class MainActivity extends Activity {
     }
 
     private void insertFromFireBase() {
+        /*SearchFilter searchFilter = SearchFilter.getInstance();
+        searchFilter.calculateDistance() < searchFilter.getMaxDistance()*/
         ArrayList <String> imgRoom = new ArrayList<>();
         imgRoom.add("defaultRoom");
-        Cards cards = new Cards("1", "District 5", imgRoom, "75 Nguyen Van Cu", 6000, 2);
+        Cards cards = new Cards("1", "District 5", imgRoom, "75 Nguyen Van Cu Street", 6000, 2);
         rowItems.add(cards);
       /*  Cards cards = new Cards("1", "Swati Tripathy", 21, "https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg", "Simple and beautiful Girl", "Acting", 200);
         rowItems.add(cards);

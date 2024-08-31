@@ -57,8 +57,6 @@ public class PhotoAdapter extends ArrayAdapter<Cards> {
             }
         });
 
-        name.setText(card_item.getDistrict() + ", " + card_item.getDistance());
-
         switch (card_item.getRoomImageUrl().get(0)) {
             case "defaultRoom":
                 Glide.with(getContext()).load(R.drawable.default_man).into(image);

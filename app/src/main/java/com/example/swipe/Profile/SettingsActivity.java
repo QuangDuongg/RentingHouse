@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -34,23 +35,28 @@ public class SettingsActivity extends AppCompatActivity {
     SwitchCompat man, woman;
     List <SwitchCompat> location;
     TextView distance_text, budget_text;
-    SearchFilter searchFilter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        searchFilter = SearchFilter.getInstance();
+        Log.d(TAG, "Check Init");
 
+        Log.d(TAG, "Check toolbar");
+        SearchFilter searchFilter = SearchFilter.getInstance();
         TextView toolbar = findViewById(R.id.toolbartag);
         toolbar.setText("Profile");
+        Log.d(TAG, "Check back btn");
         ImageButton back = findViewById(R.id.back);
+        Log.d(TAG, "Check man/woman bar");
         man = findViewById(R.id.switch_man);
         woman = findViewById(R.id.switch_woman);
-
+        Log.d(TAG, "Check create Array");
         location = new ArrayList<>(13);
         location.add(findViewById(R.id.switch_All));
+
+        Log.d(TAG, "Check find view");
         for (int i = 1; i <= 12; i++) {
             // Dynamically get the resource ID
             int resID = getResources().getIdentifier("switch_District" + i, "id", getPackageName());
@@ -71,7 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
         }
-
+        Log.d(TAG, "Check array location");
         location.get(0).setChecked(false);
         location.get(0).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -96,7 +102,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-
+        Log.d(TAG, "Check location ALL");
 
         distance = findViewById(R.id.distance);
         budget = findViewById(R.id.budget);
@@ -120,7 +126,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
-
+        Log.d(TAG, "Check distance bar");
         budget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -154,7 +160,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
-
+        Log.d(TAG, "Check budget bar");
         man.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
