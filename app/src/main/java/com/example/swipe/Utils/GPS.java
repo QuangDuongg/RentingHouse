@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
@@ -19,13 +20,13 @@ public class GPS implements LocationListener {
 
     public GPS(Context mContext) {
         this.mContext = mContext;
-        mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
+        mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-
+            Log.d("GPS", "Not ok");
             return;
         }
 
