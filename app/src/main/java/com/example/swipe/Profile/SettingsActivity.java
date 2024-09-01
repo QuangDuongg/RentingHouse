@@ -131,21 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int bound_progress = progress - progress % 100;
-                String manip_budget_text = String.valueOf(bound_progress);
-                manip_budget_text += "000";
-                String tmp = manip_budget_text;
-                manip_budget_text = "";
-                int cnt = 0;
-                for (int i = tmp.length() - 1; i >=0; i--)
-                {
-                    if(cnt == 3) {
-                        manip_budget_text = " " + manip_budget_text;
-                        cnt = 0;
-                    }
-                    cnt++;
-                    manip_budget_text = Character.toString(tmp.charAt(i)) + manip_budget_text ;
-                }
-                manip_budget_text += "VND";
+                String manip_budget_text = searchFilter.ManipPrice(bound_progress);
                 budget_text.setText(manip_budget_text);
                 searchFilter.setBudget(bound_progress);
             }

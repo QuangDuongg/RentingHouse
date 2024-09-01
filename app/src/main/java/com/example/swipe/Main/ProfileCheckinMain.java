@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.swipe.R;
+import com.example.swipe.Utils.SearchFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +59,8 @@ public class ProfileCheckinMain extends AppCompatActivity {
         Log.d("ProfileCheckinMain", "Check Address");
         profileAddress.setText(address);
         Log.d("ProfileCheckinMain", "Check Price");
-        Log.d("ProfileCheckinMain", String.valueOf(price));
-        profilePrice.setText(String.valueOf(price));
+        Log.d("ProfileCheckinMain", SearchFilter.getInstance().ManipPrice(price));
+        profilePrice.setText(SearchFilter.getInstance().ManipPrice(price));
         Log.d("ProfileCheckinMain", "Check Photo");
         profileImageUrl = intent.getStringArrayListExtra("photo");
         switch (profileImageUrl.get(0)) {

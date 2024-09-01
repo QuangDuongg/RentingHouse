@@ -127,7 +127,7 @@ public class SearchFilter {
         return (rad * 180 / Math.PI);
     }
 
-   /* public String ManipPrice (int price){
+    public String ManipPrice (int price){
         int bound_progress = price - price % 100;
         String manip_budget_text = String.valueOf(bound_progress);
         manip_budget_text += "000";
@@ -143,7 +143,7 @@ public class SearchFilter {
             cnt++;
             manip_budget_text = Character.toString(tmp.charAt(i)) + manip_budget_text ;
         }
-        manip_budget_text += "VND";
+        manip_budget_text += " VND";
         return manip_budget_text;
-    }*/
+    }
 }

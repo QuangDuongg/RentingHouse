@@ -25,6 +25,11 @@ import com.example.swipe.Utils.PulsatorLayout;
 import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -42,7 +47,7 @@ public class MainActivity extends Activity {
     private NotificationHelper mNotificationHelper;
     private Cards cards_data[];
     private PhotoAdapter arrayAdapter;
-
+    private DatabaseReference roomsRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +64,10 @@ public class MainActivity extends Activity {
 
         setupTopNavigationView();
 
+        roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
         /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
-        insertFromFireBase();
+        insertFromFirebase();
 
         arrayAdapter = new PhotoAdapter(this, R.layout.item, rowItems);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,28 +75,88 @@ public class MainActivity extends Activity {
         updateSwipeCard();
     }
 
-    private void insertFromFireBase() {
-        /*SearchFilter searchFilter = SearchFilter.getInstance();
-        searchFilter.calculateDistance() < searchFilter.getMaxDistance()*/
-        ArrayList <String> imgRoom = new ArrayList<>();
-        imgRoom.add("defaultRoom");
-        Cards cards = new Cards("1", "District 5", imgRoom, "75 Nguyen Van Cu Street", 6000, 2);
+    private void insertFromFirebase() {
+        // Get a reference to your Firebase Realtime Database
+
+        Log.d(TAG, "Attempting to retrieve data from Firebase");
+        // Attach a listener to read the data at your "rooms" reference
+        roomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange (@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "DataSnapshot received from Firebase");
+
+                // Clear the current list of Cards
+                rowItems.clear();
+                Log.d(TAG, "rowItems list cleared");
+
+                // Loop through each child in the "rooms" node
+                for (DataSnapshot roomSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "Processing room ID: " + roomSnapshot.getKey());
+
+                    try {
+                        // Extract data for each room
+                        String address = roomSnapshot.child("address").getValue(String.class);
+                        Log.d(TAG, "Address: " + address);
+
+                        String district = roomSnapshot.child("district").getValue(String.class);
+                        Log.d(TAG, "District: " + district);
+
+                        // Retrieve image URLs
+                        List<String> roomImageUrl = new ArrayList<>();
+                        for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
+                            String imageUrl = imageSnapshot.getValue(String.class);
+                            roomImageUrl.add(imageUrl);
+                            Log.d(TAG, "Image URL: " + imageUrl);
+                        }
+
+                        // Check if roomImageUrl is empty
+                        if (roomImageUrl.isEmpty()) {
+                            Log.d(TAG, "No image URLs found for this room");
+                        }
+
+                        // Get latitude and longitude
+                        Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
+                        Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
+                        Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
+
+                        // Get the price as a String and convert it to int, considering the 1K ratio
+                        String priceString = roomSnapshot.child("price").getValue(String.class);
+                        int price = Integer.parseInt(priceString) / 1000;
+                        Log.d(TAG, "Price (in thousands): " + price);
+
+                        // Create a new Cards object with the retrieved data
+                        Cards roomCard = new Cards(null, district, roomImageUrl, address, price, latitude, longitude);
+                        Log.d(TAG, "Created Cards object: " + roomCard.toString());
+
+                        // Add the Cards object to the list
+                        rowItems.add(roomCard);
+                        Log.d(TAG, "Added Cards object to rowItems list");
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error processing roomSnapshot: " + roomSnapshot.getKey(), e);
+                    }
+                }
+
+                Log.d(TAG, "Finished processing all rooms");
+
+                // Notify the adapter that the data has changed
+                arrayAdapter.notifyDataSetChanged();
+                checkRowItem(); // Ensure frames are correctly shown or hidden based on data
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle possible errors
+                Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
+            }
+        });
+
+        List <String> imgRooms = new ArrayList<>();
+        imgRooms.add("https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg");
+        Cards cards = new Cards("1", "District 5",imgRooms, "75 Nguyen Van Cu Street", 6000, 2);
         rowItems.add(cards);
-      /*  Cards cards = new Cards("1", "Swati Tripathy", 21, "https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg", "Simple and beautiful Girl", "Acting", 200);
-        rowItems.add(cards);
-        cards = new Cards("2", "Ananaya Pandy", 20, "https://i0.wp.com/profilepicturesdp.com/wp-content/uploads/2018/06/beautiful-indian-girl-image-for-profile-picture-8.jpg", "cool Minded Girl", "Dancing", 800);
-        rowItems.add(cards);
-        cards = new Cards("3", "Anjali Kasyap", 22, "https://pbs.twimg.com/profile_images/967542394898952192/_M_eHegh_400x400.jpg", "Simple and beautiful Girl", "Singing", 400);
-        rowItems.add(cards);
-        cards = new Cards("4", "Preety Deshmukh", 19, "http://profilepicturesdp.com/wp-content/uploads/2018/07/fb-real-girls-dp-3.jpg", "dashing girl", "swiming", 1308);
-        rowItems.add(cards);
-        cards = new Cards("5", "Srutimayee Sen", 20, "https://dp.profilepics.in/profile_pictures/selfie-girls-profile-pics-dp/selfie-pics-dp-for-whatsapp-facebook-profile-25.jpg", "chulbuli nautankibaj ", "Drawing", 1200);
-        rowItems.add(cards);
-        cards = new Cards("6", "Dikshya Agarawal", 21, "https://pbs.twimg.com/profile_images/485824669732200448/Wy__CJwU.jpeg", "Simple and beautiful Girl", "Sleeping", 700);
-        rowItems.add(cards);
-        cards = new Cards("7", "Sudeshna Roy", 19, "https://talenthouse-res.cloudinary.com/image/upload/c_fill,f_auto,h_640,w_640/v1411380245/user-415406/submissions/hhb27pgtlp9akxjqlr5w.jpg", "Papa's Pari", "Art", 5000);
-        rowItems.add(cards);*/
     }
+
+
 
     private void checkRowItem() {
         if (rowItems.isEmpty()) {
