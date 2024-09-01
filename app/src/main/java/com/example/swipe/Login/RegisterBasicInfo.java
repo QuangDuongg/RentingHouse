@@ -1,7 +1,10 @@
 package com.example.swipe.Login;
 
+import android.Manifest;  // Add this import
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.swipe.Main.MainActivity;
 import com.example.swipe.Mode.HostMode; // Import HostModeActivity
@@ -26,9 +30,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.example.swipe.Utils.GPS;
+import com.example.swipe.Utils.User;
 
 public class RegisterBasicInfo extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1; // Add this constant
+
+    GPS gps;
     private Context mContext;
     private String email, username, password;
     private EditText mEmail, mPassword, mUsername;
@@ -50,9 +59,36 @@ public class RegisterBasicInfo extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         // Initialize Firebase Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        // Request location permissions if not granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            // Initialize GPS only if permissions are granted
+            gps = new GPS(getApplicationContext());
+        }
 
         initWidgets();
         init();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissions granted, initialize GPS
+                gps = new GPS(getApplicationContext());
+            } else {
+                // Permissions denied, handle appropriately
+                Toast.makeText(this, "Location permission is required to use this feature.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void init() {
@@ -79,6 +115,23 @@ public class RegisterBasicInfo extends AppCompatActivity {
                                     }
                                 }
                             });
+                    Location location = gps.getLocation();
+                    if (location != null) {
+                        Log.d(TAG + "Location before manip", location.getLatitude() + "   " + location.getLongitude());
+                    }
+                    double latitude = 0;
+                    double longtitude = 0;
+                    if (location != null) {
+                        latitude = location.getLatitude();
+                        longtitude = location.getLongitude();
+                    }
+                    Log.d(TAG + "Location after manip", latitude + "   " + longtitude);
+
+                    // Intent intent = new Intent(RegisterBasicInfo.this, RegisterHostOrTenant.class);
+                    // User user = new User("", "", "", "", email, username, false, false, false, false, "", "", "", latitude, longtitude);
+                    // intent.putExtra("password", password);
+                    // intent.putExtra("classUser", user);
+                    // startActivity(intent);
                 }
             }
         });
@@ -148,5 +201,14 @@ public class RegisterBasicInfo extends AppCompatActivity {
 
     public void onLoginClicked(View view) {
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        mContext = RegisterBasicInfo.this;
+    }
+
+    // public void onLoginClicked(View view) {
+    //     startActivity(new Intent(getApplicationContext(), RegisterHostOrTenant.class));
+    // }
+
+    public void showToast(String str) {
+        Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
     }
 }
