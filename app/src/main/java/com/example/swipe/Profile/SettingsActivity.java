@@ -33,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
     SwitchCompat man, woman;
     TextView gender, distance_text, age_rnge;
     List <SwitchCompat> location;
-    TextView distance_text, budget_text;
+    //TextView distance_text, budget_text;
 
 
     @Override
@@ -50,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
         woman = findViewById(R.id.switch_woman);
 
         location = new ArrayList<>(13);
-        location.add(findViewById(R.id.switch_All));
+        //location.add(findViewById(R.id.switch_All));
         for (int i = 1; i <= 12; i++) {
             // Dynamically get the resource ID
             int resID = getResources().getIdentifier("switch_District" + i, "id", getPackageName());
@@ -96,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         distance = findViewById(R.id.distance);
-        budget = findViewById(R.id.budget);
+      //  budget = findViewById(R.id.budget);
         distance_text = findViewById(R.id.distance_text);
 
         distance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

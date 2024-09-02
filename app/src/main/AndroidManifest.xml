@@ -18,6 +18,12 @@
         android:theme="@style/Theme.Swipe"
         tools:targetApi="31">
         <activity
+            android:name=".Profile.PersonalInforActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Profile.ProfileUser"
+            android:exported="false" />
+        <activity
             android:name=".Mode.AddRoomActivity"
             android:exported="false" />
         <activity
@@ -67,7 +73,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Login Activity - Launcher Activity -->
+        </activity>
     </application>
 
 </manifest>
