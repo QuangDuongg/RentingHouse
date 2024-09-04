@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 
 import com.example.swipe.R;
+import com.example.swipe.Utils.OpenCageGeocoder;
 import com.example.swipe.Utils.PulsatorLayout;
 import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
@@ -50,10 +51,13 @@ public class MainActivity extends Activity {
     private DatabaseReference readInfoUser;
     private String userID;
     private SearchFilter searchFilter;
+    private com.example.swipe.Utils.OpenCageGeocoder OpenCageGeocoder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         searchFilter = SearchFilter.getInstance();
 
         cardFrame = findViewById(R.id.card_frame);
