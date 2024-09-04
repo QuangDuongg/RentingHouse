@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Profile ImageView -->
+    <ImageView
+        android:id="@+id/edit_profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/profile"
+        android:contentDescription="Edit Profile Image"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp" />
+
+    <!-- Add Image IconButton -->
+    <ImageButton
+        android:id="@+id/button_add_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic7"
+        android:contentDescription="Add Image"
+        android:padding="0dp"
+        app:srcCompat="@drawable/ic7"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_image"
+        app:layout_constraintStart_toEndOf="@id/edit_profile_image"
+        android:layout_marginTop="-20dp"
+        android:layout_marginStart="-20dp" />
+
+    <!-- Username Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_username_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"
+        android:hint="Username">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Date of Birth Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_dob_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_username_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="Date of Birth (dd/mm/yyyy)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_dob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Gender Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_gender_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_dob_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="Gender (Male/Female)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Email Input (Read-Only) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_email_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_gender_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="Email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Save Changes Button -->
+    <Button
+        android:id="@+id/button_save_changes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/text_email_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="12dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
