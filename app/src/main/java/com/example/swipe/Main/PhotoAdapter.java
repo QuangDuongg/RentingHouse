@@ -53,6 +53,7 @@ public class PhotoAdapter extends ArrayAdapter<Cards> {
                 intent.putExtra("address", card_item.getAddress());
                 intent.putExtra("price", card_item.getPrice());
                 intent.putExtra("distance", card_item.getDistance());
+                intent.putExtra("DPD", card_item.getDPD());
                 mContext.startActivity(intent);
             }
         });

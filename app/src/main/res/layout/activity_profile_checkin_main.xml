@@ -60,6 +60,15 @@
                 android:text="2 km away"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/DPD_beforematch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/no_descriptiion"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/address_beforematch"

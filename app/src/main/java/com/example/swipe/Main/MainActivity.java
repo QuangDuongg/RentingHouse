@@ -135,6 +135,9 @@ public class MainActivity extends Activity {
 
                         String idHost = roomSnapshot.child("idHost").getValue(String.class);
                         String address = roomSnapshot.child("address").getValue(String.class);
+                        String DPD = roomSnapshot.child("DPD").getValue(String.class);
+                        if(DPD == null)
+                            DPD = "No description";
                         List<String> roomImageUrl = new ArrayList<>();
                         for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
                             String imageUrl = imageSnapshot.getValue(String.class);
@@ -142,7 +145,7 @@ public class MainActivity extends Activity {
                         }
                         // Check condition
 
-                        Cards roomCard = new Cards(null, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
+                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
                         rowItems.add(roomCard);
 
                     } catch (Exception e) {

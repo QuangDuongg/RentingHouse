@@ -19,6 +19,7 @@ import com.example.swipe.Utils.SearchFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProfileCheckinMain extends AppCompatActivity {
 
@@ -32,37 +33,33 @@ public class ProfileCheckinMain extends AppCompatActivity {
 
         mContext = ProfileCheckinMain.this;
 
+        TextView DPD = findViewById(R.id.DPD_beforematch);
         TextView profileDistrict = findViewById(R.id.District_main);
-        // ImageView profileImage = findViewById(R.id.profileImage);
         TextView profileAddress = findViewById(R.id.address_beforematch);
         TextView profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
+
 
         Intent intent = getIntent();
         String district = intent.getStringExtra("district");
         String address = intent.getStringExtra("address");
         int price = intent.getIntExtra("price", 1000);
         int distance = intent.getIntExtra("distance", 2);
+        String description;
+        description = intent.getStringExtra("DPD");
+        if(!Objects.equals(description, "No description"))
+            description = "Description: " + description;
 
+        DPD.setText(description);
         profileDistance.setText(String.valueOf(distance) + " Km away");
         profileDistrict.setText(district);
-        profileAddress.setText(address);
-        profilePrice.setText(SearchFilter.getInstance().ManipPrice(price));
+        profileAddress.setText("Address: " + address);
+        profilePrice.setText("Price: " + SearchFilter.getInstance().ManipPrice(price));
+
+
 
         profileImageUrl = intent.getStringArrayListExtra("photo");
 
-       /* if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-            switch (profileImageUrl.get(0)) {
-                case "defaultRoom":
-                    Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
-                    break;
-                default:
-                    Glide.with(mContext).load(profileImageUrl.get(0)).into(profileImage);
-                    break;
-            }
-        } else {
-            Glide.with(mContext).load(R.drawable.default_man).into(profileImage); // Fallback image
-        }*/
 
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             ViewPager2 viewPager = findViewById(R.id.profileImage);

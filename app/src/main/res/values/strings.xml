@@ -31,6 +31,7 @@
     <string name="entry_your_email">entry your Email</string>
     <string name="enter_your_username">enter your username</string>
     <string name="enter_your_password">enter your Password</string>
+    <string name="no_descriptiion">No Descriptiion</string>
 
     <!-- introduction pictures-->
     <integer-array name="img_id_arr">
