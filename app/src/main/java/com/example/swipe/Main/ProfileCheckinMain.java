@@ -10,12 +10,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.swipe.R;
+import com.example.swipe.Utils.ImagePagerAdapter;
 import com.example.swipe.Utils.SearchFilter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileCheckinMain extends AppCompatActivity {
 
@@ -30,7 +33,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
         mContext = ProfileCheckinMain.this;
 
         TextView profileDistrict = findViewById(R.id.District_main);
-        ImageView profileImage = findViewById(R.id.profileImage);
+        // ImageView profileImage = findViewById(R.id.profileImage);
         TextView profileAddress = findViewById(R.id.address_beforematch);
         TextView profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
@@ -48,7 +51,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
 
         profileImageUrl = intent.getStringArrayListExtra("photo");
 
-        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+       /* if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             switch (profileImageUrl.get(0)) {
                 case "defaultRoom":
                     Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
@@ -59,7 +62,16 @@ public class ProfileCheckinMain extends AppCompatActivity {
             }
         } else {
             Glide.with(mContext).load(R.drawable.default_man).into(profileImage); // Fallback image
+        }*/
+
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            ViewPager2 viewPager = findViewById(R.id.profileImage);
+            ImagePagerAdapter adapter = new ImagePagerAdapter(this, profileImageUrl);
+            viewPager.setAdapter(adapter);
+        } else {
+            Toast.makeText(this, "No images available", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     public void DislikeBtn(View v) {
