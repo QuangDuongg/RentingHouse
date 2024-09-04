@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.swipe.R;
 import com.example.swipe.Utils.PulsatorLayout;
+import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -44,14 +45,16 @@ public class MainActivity extends Activity {
     FrameLayout cardFrame, moreFrame;
     private Context mContext = MainActivity.this;
     private NotificationHelper mNotificationHelper;
-    private Cards cards_data[];
     private PhotoAdapter arrayAdapter;
     private DatabaseReference roomsRef;
+    private DatabaseReference readInfoUser;
+    private String userID;
+    private SearchFilter searchFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        searchFilter = SearchFilter.getInstance();
 
         cardFrame = findViewById(R.id.card_frame);
         moreFrame = findViewById(R.id.more_frame);
@@ -62,6 +65,28 @@ public class MainActivity extends Activity {
 
         setupTopNavigationView();
 
+
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("userID");
+        if(userID == null)
+            userID = "ObTze76baPUz9kkXzguIlCg2u7F3";
+        readInfoUser = FirebaseDatabase.getInstance().getReference("users").child(userID);
+        readInfoUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("latitude").getValue(Double.class) != null)
+                    searchFilter.setLatitudeUser(snapshot.child("latitude").getValue(Double.class));
+                if(snapshot.child("longitude").getValue(Double.class) != null)
+                    searchFilter.setLongitudeUser(snapshot.child("longitude").getValue(Double.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Log.d(TAG, userID);
         roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
         /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
@@ -82,21 +107,42 @@ public class MainActivity extends Activity {
                 // Process data from Firebase and populate rowItems
                 for (DataSnapshot roomSnapshot : dataSnapshot.getChildren()) {
                     try {
-                        String address = roomSnapshot.child("address").getValue(String.class);
                         String district = roomSnapshot.child("district").getValue(String.class);
+                        // Map the district to the corresponding index in isDistrict
+                        int districtIndex = getDistrictIndex(district);
+                        // Check if the district is enabled in SearchFilter
+                        Log.d(TAG, "Check condition ");
+                        if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
+                            Log.d(TAG, "Not valid district");
+                            Log.d(TAG, district);
+                            continue;
+                        }
 
+
+                        Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
+                        Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
+                        if(searchFilter.calculateDistance(latitude,longitude) > searchFilter.getMaxDistance()) {
+                            Log.d(TAG, "Not valid distance");
+                            continue;
+                        }
+
+                        String priceString = roomSnapshot.child("price").getValue(String.class);
+                        int price = Integer.parseInt(priceString) / 1000;
+                        if(price > searchFilter.getBudget()) {
+                            Log.d(TAG, "Not valid budget");
+                            continue;
+                        }
+
+                        String idHost = roomSnapshot.child("idHost").getValue(String.class);
+                        String address = roomSnapshot.child("address").getValue(String.class);
                         List<String> roomImageUrl = new ArrayList<>();
                         for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
                             String imageUrl = imageSnapshot.getValue(String.class);
                             roomImageUrl.add(imageUrl);
                         }
+                        // Check condition
 
-                        Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
-                        Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
-                        String priceString = roomSnapshot.child("price").getValue(String.class);
-                        int price = Integer.parseInt(priceString) / 1000;
-
-                        Cards roomCard = new Cards(null, district, roomImageUrl, address, price, latitude, longitude);
+                        Cards roomCard = new Cards(null, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
                         rowItems.add(roomCard);
 
                     } catch (Exception e) {
@@ -276,11 +322,73 @@ public class MainActivity extends Activity {
         menuItem.setChecked(true);
     }
 
+    // Helper function to map district string to the corresponding index in isDistrict
+    private int getDistrictIndex(String district) {
+        // Convert the district name to lowercase to make the comparison case-insensitive
+        district = district.toLowerCase().trim();
+
+        // Handle Vietnamese and English district names
+        switch (district) {
+            case "district 1":
+            case "quận 1":
+            case "quan 1":
+                return 1;
+            case "district 2":
+            case "quan 2":
+            case "quận 2":
+                return 2;
+            case "district 3":
+            case "quận 3":
+            case "quan 3":
+                return 3;
+            case "district 4":
+            case "quận 4":
+            case "quan 4":
+                return 4;
+            case "district 5":
+            case "quận 5":
+            case "quan 5":
+                return 5;
+            case "district 6":
+            case "quận 6":
+            case "quan 6":
+                return 6;
+            case "district 7":
+            case "quận 7":
+            case "quan 7":
+                return 7;
+            case "district 8":
+            case "quận 8":
+            case "quan 8":
+                return 8;
+            case "district 9":
+            case "quận 9":
+            case "quan 9":
+                return 9;
+            case "district 10":
+            case "quận 10":
+            case "quan 10":
+                return 10;
+            case "district 11":
+            case "quận 11":
+            case "quan 11":
+                return 11;
+            case "district 12":
+            case "quận 12":
+            case "quan 12":
+                return 12;
+            default:
+                return -1; // Invalid district
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
 
     }
+
+
 
 
 }

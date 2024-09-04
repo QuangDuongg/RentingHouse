@@ -9,10 +9,11 @@ public class SearchFilter {
     private static SearchFilter instance;
 
     // Class variables
+    String userID;
     boolean isForMan, isForWoman;
     ArrayList<Boolean> isDistrict;
     double maxDistance, budget; // budget ratio 1K
-    double latitudeUser, longtitudeUser;
+    double latitudeUser, longitudeUser;
 
     // Private constructor to prevent instantiation
     private SearchFilter() {
@@ -25,7 +26,8 @@ public class SearchFilter {
         maxDistance = 4.0;
         budget = 2000;
         latitudeUser = 0;
-        longtitudeUser = 0;
+        longitudeUser = 0;
+        userID = "ObTze76baPUz9kkXzguIlCg2u7F3";
     }
 
     // Public method to provide access to the instance
@@ -66,6 +68,9 @@ public class SearchFilter {
     public void setIsDistrictIndex (int index, boolean status){
         this.isDistrict.set(index, status);
     }
+    public boolean getIsDistrictIndex (int index){
+        return this.isDistrict.get(index);
+    }
 
     public double getMaxDistance() {
         return maxDistance;
@@ -87,20 +92,20 @@ public class SearchFilter {
         return latitudeUser;
     }
 
-    public double getLongtitudeUser() {
-        return longtitudeUser;
+    public double getLongitudeUser() {
+        return longitudeUser;
     }
 
     public void setLatitudeUser(double latitudeUser) {
         this.latitudeUser = latitudeUser;
     }
 
-    public void setLongtitudeUser(double longtitudeUser) {
-        this.longtitudeUser = longtitudeUser;
+    public void setLongitudeUser(double longitudeUser) {
+        this.longitudeUser = longitudeUser;
     }
 
     public double calculateDistance(double lat2, double lon2) {
-        double theta = this.longtitudeUser - lon2;
+        double theta = this.longitudeUser - lon2;
         double dist = Math.sin(deg2rad(this.latitudeUser)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(this.latitudeUser)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
@@ -145,5 +150,13 @@ public class SearchFilter {
         }
         manip_budget_text += " VND";
         return manip_budget_text;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

@@ -30,9 +30,6 @@ public class PhotoAdapter extends ArrayAdapter<Cards> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final Cards card_item = getItem(position);
-        Log.d("PhotoAdapter", "getView called for position: " + position);
-        Log.d("PhotoAdapter", "Size: ");
-        Log.d("PhotoAdapter", "Size: " + getItem(position).getDistrict());
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
