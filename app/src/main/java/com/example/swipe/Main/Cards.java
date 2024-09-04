@@ -7,7 +7,7 @@ public class Cards {
     private String DPD;
     private String district, address;
     private List<String> roomImageUrl;
-    private double distance, latitude, longtitude;
+    private double distance, latitude, longitude;
     private int price; // in ratio 1K
 
     public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double distance) {
@@ -19,14 +19,14 @@ public class Cards {
         this.distance = distance;
     }
 
-    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double latitude, double longtitude) {
+    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double latitude, double longitude) {
         this.DPD = DPD;
         this.district = district;
         this.roomImageUrl = roomImageUrl;
         this.address = address;
         this.price = price;
         this.latitude = latitude;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
     }
 
     public Cards(List<String> roomImageUrl) {
@@ -81,12 +81,12 @@ public class Cards {
         this.latitude = latitude;
     }
 
-    public double getLongtitude() {
-        return longtitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLongtitude(double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public int getPrice() {

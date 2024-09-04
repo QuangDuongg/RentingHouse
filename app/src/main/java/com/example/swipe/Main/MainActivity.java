@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.example.swipe.R;
 import com.example.swipe.Utils.PulsatorLayout;
-import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -61,100 +60,71 @@ public class MainActivity extends Activity {
         mPulsator.start();
         mNotificationHelper = new NotificationHelper(this);
 
-
         setupTopNavigationView();
 
         roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
         /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
         insertFromFirebase();
-
-        arrayAdapter = new PhotoAdapter(this, R.layout.item, rowItems);
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        checkRowItem();
-        updateSwipeCard();
     }
 
     private void insertFromFirebase() {
-        // Get a reference to your Firebase Realtime Database
-
         Log.d(TAG, "Attempting to retrieve data from Firebase");
-        // Attach a listener to read the data at your "rooms" reference
+
+        // Clear the current list of Cards
+        rowItems = new ArrayList<>();
+
         roomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange (@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "DataSnapshot received from Firebase");
 
-                // Clear the current list of Cards
-                rowItems.clear();
-                Log.d(TAG, "rowItems list cleared");
-
-                // Loop through each child in the "rooms" node
+                // Process data from Firebase and populate rowItems
                 for (DataSnapshot roomSnapshot : dataSnapshot.getChildren()) {
-                    Log.d(TAG, "Processing room ID: " + roomSnapshot.getKey());
-
                     try {
-                        // Extract data for each room
                         String address = roomSnapshot.child("address").getValue(String.class);
-                        Log.d(TAG, "Address: " + address);
-
                         String district = roomSnapshot.child("district").getValue(String.class);
-                        Log.d(TAG, "District: " + district);
 
-                        // Retrieve image URLs
                         List<String> roomImageUrl = new ArrayList<>();
                         for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
                             String imageUrl = imageSnapshot.getValue(String.class);
                             roomImageUrl.add(imageUrl);
-                            Log.d(TAG, "Image URL: " + imageUrl);
                         }
 
-                        // Check if roomImageUrl is empty
-                        if (roomImageUrl.isEmpty()) {
-                            Log.d(TAG, "No image URLs found for this room");
-                        }
-
-                        // Get latitude and longitude
                         Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
                         Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
-                        Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
-
-                        // Get the price as a String and convert it to int, considering the 1K ratio
                         String priceString = roomSnapshot.child("price").getValue(String.class);
                         int price = Integer.parseInt(priceString) / 1000;
-                        Log.d(TAG, "Price (in thousands): " + price);
 
-                        // Create a new Cards object with the retrieved data
                         Cards roomCard = new Cards(null, district, roomImageUrl, address, price, latitude, longitude);
-                        Log.d(TAG, "Created Cards object: " + roomCard.toString());
-
-                        // Add the Cards object to the list
                         rowItems.add(roomCard);
-                        Log.d(TAG, "Added Cards object to rowItems list");
+
                     } catch (Exception e) {
                         Log.e(TAG, "Error processing roomSnapshot: " + roomSnapshot.getKey(), e);
                     }
                 }
 
                 Log.d(TAG, "Finished processing all rooms");
+                Log.d(TAG, "right after fetch size: " + String.valueOf(rowItems.size()));
+                // Notify adapter of the new data
 
-                // Notify the adapter that the data has changed
+                arrayAdapter = new PhotoAdapter(MainActivity.this, R.layout.item, rowItems);
+                checkRowItem();
+                updateSwipeCard();
                 arrayAdapter.notifyDataSetChanged();
-                checkRowItem(); // Ensure frames are correctly shown or hidden based on data
+
+                // Ensure frames are correctly shown or hidden based on data
+                checkRowItem();
+                updateSwipeCard();  // You can update the UI after data is loaded
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle possible errors
                 Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
             }
         });
-
-        List <String> imgRooms = new ArrayList<>();
-        imgRooms.add("https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg");
-        Cards cards = new Cards("1", "District 5",imgRooms, "75 Nguyen Van Cu Street", 6000, 2);
-        rowItems.add(cards);
     }
+
 
 
 

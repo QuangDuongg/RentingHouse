@@ -16,28 +16,18 @@ import com.example.swipe.R;
 import com.example.swipe.Utils.SearchFilter;
 
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class ProfileCheckinMain extends AppCompatActivity {
 
     private Context mContext;
     ArrayList<String> profileImageUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_checkin_main);
 
         mContext = ProfileCheckinMain.this;
-
-       /* ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-*/
 
         TextView profileDistrict = findViewById(R.id.District_main);
         ImageView profileImage = findViewById(R.id.profileImage);
@@ -50,40 +40,37 @@ public class ProfileCheckinMain extends AppCompatActivity {
         String address = intent.getStringExtra("address");
         int price = intent.getIntExtra("price", 1000);
         int distance = intent.getIntExtra("distance", 2);
-        // lack of photos
 
-        Log.d("ProfileCheckinMain", "Check Distance");
         profileDistance.setText(String.valueOf(distance) + " Km away");
-        Log.d("ProfileCheckinMain", "Check District");
         profileDistrict.setText(district);
-        Log.d("ProfileCheckinMain", "Check Address");
         profileAddress.setText(address);
-        Log.d("ProfileCheckinMain", "Check Price");
-        Log.d("ProfileCheckinMain", SearchFilter.getInstance().ManipPrice(price));
         profilePrice.setText(SearchFilter.getInstance().ManipPrice(price));
-        Log.d("ProfileCheckinMain", "Check Photo");
+
         profileImageUrl = intent.getStringArrayListExtra("photo");
-        switch (profileImageUrl.get(0)) {
-            case "defaultRoom":
-                Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
-                break;
-            default:
-                Glide.with(mContext).load(profileImageUrl).into(profileImage);
-                break;
+
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            switch (profileImageUrl.get(0)) {
+                case "defaultRoom":
+                    Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
+                    break;
+                default:
+                    Glide.with(mContext).load(profileImageUrl.get(0)).into(profileImage);
+                    break;
+            }
+        } else {
+            Glide.with(mContext).load(R.drawable.default_man).into(profileImage); // Fallback image
         }
     }
 
-
     public void DislikeBtn(View v) {
-            Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
-            btnClick.putStringArrayListExtra("url", profileImageUrl);
-            startActivity(btnClick);
+        Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
+        btnClick.putStringArrayListExtra("url", profileImageUrl);
+        startActivity(btnClick);
     }
 
     public void LikeBtn(View v) {
-            Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
-            btnClick.putStringArrayListExtra("url", profileImageUrl);
-            startActivity(btnClick);
+        Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
+        btnClick.putStringArrayListExtra("url", profileImageUrl);
+        startActivity(btnClick);
     }
-
 }
