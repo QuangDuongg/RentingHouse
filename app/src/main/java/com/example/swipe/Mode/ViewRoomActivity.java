@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.swipe.Main.Cards;
 import com.example.swipe.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +27,7 @@ public class ViewRoomActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
-    private List<Room> roomList;
+    private List<Cards> roomList;
 
     // Firebase Variable
     private FirebaseAuth mAuth;
@@ -78,23 +79,27 @@ public class ViewRoomActivity extends AppCompatActivity {
 
         // Initialize Room list and add some data (you can dynamically add items here)
         roomList = new ArrayList<>();
-        roomList.add(new Room("Room A"));
+   /*     roomList.add(new Room("Room A"));
         roomList.add(new Room("Room B"));
         roomList.add(new Room("Room C"));
         roomList.add(new Room("Room D"));
         roomList.add(new Room("Room E"));
-        roomList.add(new Room("Room F"));
+        roomList.add(new Room("Room F"));*/
 
         // Initialize Adapter and set it to RecyclerView
         // Set Adapter
-        roomAdapter = new RoomAdapter(roomList, new View.OnClickListener() {
+        List<String> tmpLink = new ArrayList<>();
+        tmpLink.add("https://www.thespruce.com/thmb/iMt63n8NGCojUETr6-T8oj-5-ns=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/PAinteriors-7-cafe9c2bd6be4823b9345e591e4f367f.jpg");
+        roomList = new ArrayList<>();
+        roomList.add(new Cards("Room A", "1 km", tmpLink,"",1000,2.0));  // Add Cards data as required
+        roomList.add(new Cards("Room B", "2 km", tmpLink,"",1000,2.0));
+
+        roomAdapter = new RoomAdapter(this, roomList, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Handle button click
-                Toast.makeText(ViewRoomActivity.this, "Add Room clicked", Toast.LENGTH_SHORT).show();
-                // Add a new room dynamically
-                roomList.add(new Room("New Room"));
-                roomAdapter.notifyItemInserted(roomList.size()); // Notify the adapter that a new item is added
+                // Handle "Add Room" button click here
+                roomList.add(new Cards("New Room", "Unknown km", tmpLink,"",1000,2.0));
+                roomAdapter.notifyItemInserted(roomList.size());  // Notify adapter of new item
             }
         });
         recyclerView.setAdapter(roomAdapter);
@@ -102,7 +107,6 @@ public class ViewRoomActivity extends AppCompatActivity {
 
     // Function to dynamically add rooms to the list
     private void addRoom(String roomName) {
-        roomList.add(new Room(roomName));
-        roomAdapter.notifyItemInserted(roomList.size() - 1);
+       // addRoom Act
     }
 }

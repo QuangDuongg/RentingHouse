@@ -44,7 +44,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
         String district = intent.getStringExtra("district");
         String address = intent.getStringExtra("address");
         int price = intent.getIntExtra("price", 1000);
-        int distance = intent.getIntExtra("distance", 2);
+        double distance = intent.getDoubleExtra("distance", 1.0);
         String description;
         description = intent.getStringExtra("DPD");
         if(!Objects.equals(description, "No description"))
