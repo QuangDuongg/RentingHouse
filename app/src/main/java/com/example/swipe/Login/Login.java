@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.swipe.Main.MainActivity;
 import com.example.swipe.Mode.HostMode; // Chắc chắn rằng bạn đã có activity này
 import com.example.swipe.Mode.TenantMode; // Chắc chắn rằng bạn đã có activity này
 import com.example.swipe.R;
@@ -122,7 +123,8 @@ public class Login extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else if (role.equals("tenant")) {
-                        Intent intent = new Intent(Login.this, TenantMode.class);
+                        // Intent intent = new Intent(Login.this, TenantMode.class);
+                        Intent intent = new Intent(Login.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

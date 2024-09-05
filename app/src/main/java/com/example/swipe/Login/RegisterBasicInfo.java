@@ -182,7 +182,8 @@ public class RegisterBasicInfo extends AppCompatActivity {
             Intent intent = new Intent(RegisterBasicInfo.this, HostMode.class);
             startActivity(intent);
         } else if (role.equals("tenant")) {
-            Intent intent = new Intent(RegisterBasicInfo.this, TenantMode.class);
+            // Intent intent = new Intent(RegisterBasicInfo.this, TenantMode.class);
+            Intent intent = new Intent(RegisterBasicInfo.this, MainActivity.class);
             startActivity(intent);
         }
         finish();

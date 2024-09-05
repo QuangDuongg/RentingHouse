@@ -31,11 +31,10 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
-    SeekBar distance;
+    SeekBar distance, budget;
     SwitchCompat man, woman;
-    TextView gender, distance_text, age_rnge;
     List <SwitchCompat> location;
-    //TextView distance_text, budget_text;
+    TextView distance_text, budget_text;
 
 
     @Override
@@ -106,8 +105,9 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "Check location ALL");
 
         distance = findViewById(R.id.distance);
-      //  budget = findViewById(R.id.budget);
+        budget = findViewById(R.id.budget);
         distance_text = findViewById(R.id.distance_text);
+        budget_text = findViewById(R.id.budget_text);
 
         distance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
