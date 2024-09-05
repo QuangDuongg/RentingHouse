@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 
 import com.example.swipe.Main.MainActivity;
 import com.example.swipe.Matched.Matched_Activity;
+import com.example.swipe.Message.Message;
+import com.example.swipe.Message.MessageActivity;
 import com.example.swipe.Profile.Profile_Activity;
 import com.example.swipe.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -37,7 +39,7 @@ public class TopNavigationViewHelper {
                     Intent intent1 = new Intent(context, MainActivity.class);
                     context.startActivity(intent1);
                 } else if (id == R.id.ic_matched) {
-                    Intent intent3 = new Intent(context, Matched_Activity.class);
+                    Intent intent3 = new Intent(context, MessageActivity.class);
                     context.startActivity(intent3);
                 }
                 return false;

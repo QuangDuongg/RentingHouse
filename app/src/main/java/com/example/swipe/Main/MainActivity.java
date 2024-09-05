@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
                         if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
                             Log.d(TAG, "Not valid district");
                             Log.d(TAG, district);
-                            continue;
+                            //continue;
                         }
 
 
@@ -127,14 +127,14 @@ public class MainActivity extends Activity {
                         Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
                         if(searchFilter.calculateDistance(latitude,longitude) > searchFilter.getMaxDistance()) {
                             Log.d(TAG, "Not valid distance");
-                            continue;
+                            //continue;
                         }
 
                         String priceString = roomSnapshot.child("price").getValue(String.class);
                         int price = Integer.parseInt(priceString) / 1000;
                         if(price > searchFilter.getBudget()) {
                             Log.d(TAG, "Not valid budget");
-                            continue;
+                           // continue;
                         }
 
                         String idHost = roomSnapshot.child("idHost").getValue(String.class);

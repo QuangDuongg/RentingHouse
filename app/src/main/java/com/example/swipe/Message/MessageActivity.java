@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.swipe.Main.MainActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.example.swipe.Mode.HostMode;
@@ -103,7 +105,7 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(intent);
             } else if ("tenant".equals(userRole)) {
                 // Chuyển về TenantMode nếu role là tenant
-                Intent intent = new Intent(MessageActivity.this, TenantMode.class);
+                Intent intent = new Intent(MessageActivity.this, MainActivity.class);
                 startActivity(intent);
             }
             finish();
