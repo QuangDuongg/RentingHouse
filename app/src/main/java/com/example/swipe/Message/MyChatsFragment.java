@@ -77,13 +77,14 @@ public class MyChatsFragment extends Fragment {
                         if (!addedUserIds.contains(otherUserId)) {
                             addedUserIds.add(otherUserId);
 
-                            // Lấy tên người dùng từ Firebase dựa trên otherUserId
+                            // Lấy tên và avatar của người dùng từ Firebase dựa trên otherUserId
                             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(otherUserId);
                             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot userSnapshot) {
                                     String userName = userSnapshot.child("username").getValue(String.class);
-                                    User user = new User(otherUserId, userName, null);
+                                    String profileImageUrl = userSnapshot.child("profileImageUrl").getValue(String.class); // Lấy URL ảnh đại diện
+                                    User user = new User(otherUserId, userName, null, profileImageUrl); // Cập nhật đối tượng User
                                     userList.add(user);
                                     lastMessagesMap.put(user.getUserId(), lastMessage);
                                     usersAdapter.notifyDataSetChanged();
@@ -105,6 +106,7 @@ public class MyChatsFragment extends Fragment {
             }
         });
     }
+
 
 
 

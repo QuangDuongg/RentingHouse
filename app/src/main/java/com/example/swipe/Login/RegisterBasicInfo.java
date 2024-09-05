@@ -161,7 +161,7 @@ public class RegisterBasicInfo extends AppCompatActivity {
             role = "tenant"; // giá trị mặc định nếu không chọn gì
         }
         String defaultGender = "Not Specified";
-        String defaultProfileImageUrl = "default_profile_image_url";
+        String defaultProfileImageUrl = "";
         String defaultDob = "01/01/2000";
         User_Copy user = new User_Copy(userId, username, email, defaultProfileImageUrl, defaultDob, defaultGender, role);
         mDatabase.child("users").child(userId).setValue(user)

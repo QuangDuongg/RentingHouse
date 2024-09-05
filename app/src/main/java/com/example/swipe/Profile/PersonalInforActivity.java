@@ -160,8 +160,21 @@ public class PersonalInforActivity extends AppCompatActivity {
             fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(PersonalInforActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
-                    goBackToPreviousScreen();
+                    // Get the download URL
+                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            // Save the image URL to the database
+                            userRef.child("profileImageUrl").setValue(uri.toString());
+                            Toast.makeText(PersonalInforActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                            goBackToPreviousScreen();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(PersonalInforActivity.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -174,6 +187,7 @@ public class PersonalInforActivity extends AppCompatActivity {
             goBackToPreviousScreen();
         }
     }
+
 
     private void goBackToPreviousScreen() {
         // Quay lại màn hình trước đó
