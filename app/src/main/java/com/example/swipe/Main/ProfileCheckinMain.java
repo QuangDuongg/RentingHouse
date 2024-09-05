@@ -3,20 +3,29 @@ package com.example.swipe.Main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.swipe.R;
+import com.example.swipe.Utils.ImagePagerAdapter;
+import com.example.swipe.Utils.SearchFilter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ProfileCheckinMain extends AppCompatActivity {
 
     private Context mContext;
-    String profileImageUrl;
+    ArrayList<String> profileImageUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,61 +33,53 @@ public class ProfileCheckinMain extends AppCompatActivity {
 
         mContext = ProfileCheckinMain.this;
 
-       /* ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-*/
-
-        TextView profileName = findViewById(R.id.name_main);
-        ImageView profileImage = findViewById(R.id.profileImage);
-        TextView profileBio = findViewById(R.id.bio_beforematch);
-        TextView profileInterest = findViewById(R.id.interests_beforematch);
+        TextView DPD = findViewById(R.id.DPD_beforematch);
+        TextView profileDistrict = findViewById(R.id.District_main);
+        TextView profileAddress = findViewById(R.id.address_beforematch);
+        TextView profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
 
+
         Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-        String bio = intent.getStringExtra("bio");
-        String interest = intent.getStringExtra("interest");
-        int distance = intent.getIntExtra("distance", 1);
-        String append = (distance == 1) ? "mile away" : "miles away";
+        String district = intent.getStringExtra("district");
+        String address = intent.getStringExtra("address");
+        int price = intent.getIntExtra("price", 1000);
+        int distance = intent.getIntExtra("distance", 2);
+        String description;
+        description = intent.getStringExtra("DPD");
+        if(!Objects.equals(description, "No description"))
+            description = "Description: " + description;
 
-        profileDistance.setText(distance + " " + append);
-        profileName.setText(name);
-        profileBio.setText(bio);
-        profileInterest.setText(interest);
+        DPD.setText(description);
+        profileDistance.setText(String.valueOf(distance) + " Km away");
+        profileDistrict.setText(district);
+        profileAddress.setText("Address: " + address);
+        profilePrice.setText("Price: " + SearchFilter.getInstance().ManipPrice(price));
 
-        profileImageUrl = intent.getStringExtra("photo");
-        switch (profileImageUrl) {
-            case "defaultFemale":
-                Glide.with(mContext).load(R.drawable.default_woman).into(profileImage);
-                break;
-            case "defaultMale":
-                Glide.with(mContext).load(R.drawable.default_man).into(profileImage);
-                break;
-            default:
-                Glide.with(mContext).load(profileImageUrl).into(profileImage);
-                break;
+
+
+        profileImageUrl = intent.getStringArrayListExtra("photo");
+
+
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            ViewPager2 viewPager = findViewById(R.id.profileImage);
+            ImagePagerAdapter adapter = new ImagePagerAdapter(this, profileImageUrl);
+            viewPager.setAdapter(adapter);
+        } else {
+            Toast.makeText(this, "No images available", Toast.LENGTH_SHORT).show();
         }
+
     }
 
-
     public void DislikeBtn(View v) {
-
-            Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
-            btnClick.putExtra("url", profileImageUrl);
-            startActivity(btnClick);
-
+        Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
+        btnClick.putStringArrayListExtra("url", profileImageUrl);
+        startActivity(btnClick);
     }
 
     public void LikeBtn(View v) {
-            Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
-            btnClick.putExtra("url", profileImageUrl);
-            startActivity(btnClick);
-
+        Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
+        btnClick.putStringArrayListExtra("url", profileImageUrl);
+        startActivity(btnClick);
     }
-
 }

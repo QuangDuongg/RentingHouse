@@ -1,68 +1,103 @@
 package com.example.swipe.Main;
 
 
+import java.util.List;
 
 public class Cards {
-    private String userId;
-    private String name, profileImageUrl, bio, interest;
-    private int age;
-    private int distance;
+    private String DPD;
+    private String district, address;
+    private List<String> roomImageUrl;
+    private double distance, latitude, longitude;
+    private int price; // in ratio 1K
 
-    public Cards(String userId, String name, int age, String profileImageUrl, String bio, String interest, int distance) {
-        this.userId = userId;
-        this.name = name;
-        this.age = age;
-        this.profileImageUrl = profileImageUrl;
-        this.bio = bio;
-        this.interest = interest;
+    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double distance) {
+        this.DPD = DPD;
+        this.district = district;
+        this.roomImageUrl = roomImageUrl;
+        this.address = address;
+        this.price = price;
         this.distance = distance;
     }
 
-    public Cards(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double latitude, double longitude) {
+        this.DPD = DPD;
+        this.district = district;
+        this.roomImageUrl = roomImageUrl;
+        this.address = address;
+        this.price = price;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public int getDistance() {
+    public Cards(List<String> roomImageUrl) {
+        this.roomImageUrl = roomImageUrl;
+    }
+
+    public String getDPD() {
+        return DPD;
+    }
+
+    public void setDPD(String DPD) {
+        this.DPD = DPD;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<String> getRoomImageUrl() {
+        return roomImageUrl;
+    }
+
+    public void setRoomImageUrl(List<String> roomImageUrl) {
+        this.roomImageUrl = roomImageUrl;
+    }
+
+    public double getDistance() {
         return distance;
     }
 
-    public String getBio() {
-        return bio;
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
-    public String getInterest() {
-        return interest;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public int getAge() {
-        return age;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public int getPrice() {
+        return price;
     }
 
-    public String getUserId() {
-        return userId;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public boolean isAnyImageRoom (){
+        return !this.roomImageUrl.isEmpty();
     }
 }

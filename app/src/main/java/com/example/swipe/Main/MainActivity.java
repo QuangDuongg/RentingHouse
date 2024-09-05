@@ -21,9 +21,16 @@ import android.widget.Toast;
 
 
 import com.example.swipe.R;
+import com.example.swipe.Utils.OpenCageGeocoder;
 import com.example.swipe.Utils.PulsatorLayout;
+import com.example.swipe.Utils.SearchFilter;
 import com.example.swipe.Utils.TopNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -39,14 +46,19 @@ public class MainActivity extends Activity {
     FrameLayout cardFrame, moreFrame;
     private Context mContext = MainActivity.this;
     private NotificationHelper mNotificationHelper;
-    private Cards cards_data[];
     private PhotoAdapter arrayAdapter;
+    private DatabaseReference roomsRef;
+    private DatabaseReference readInfoUser;
+    private String userID;
+    private SearchFilter searchFilter;
+    private com.example.swipe.Utils.OpenCageGeocoder OpenCageGeocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        searchFilter = SearchFilter.getInstance();
 
         cardFrame = findViewById(R.id.card_frame);
         moreFrame = findViewById(R.id.more_frame);
@@ -55,31 +67,119 @@ public class MainActivity extends Activity {
         mPulsator.start();
         mNotificationHelper = new NotificationHelper(this);
 
-
         setupTopNavigationView();
 
 
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("userID");
+        if(userID == null)
+            userID = "ObTze76baPUz9kkXzguIlCg2u7F3";
+        readInfoUser = FirebaseDatabase.getInstance().getReference("users").child(userID);
+        readInfoUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child("latitude").getValue(Double.class) != null)
+                    searchFilter.setLatitudeUser(snapshot.child("latitude").getValue(Double.class));
+                if(snapshot.child("longitude").getValue(Double.class) != null)
+                    searchFilter.setLongitudeUser(snapshot.child("longitude").getValue(Double.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Log.d(TAG, userID);
+        roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
+        /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
-        Cards cards = new Cards("1", "Swati Tripathy", 21, "https://im.idiva.com/author/2018/Jul/shivani_chhabra-_author_s_profile.jpg", "Simple and beautiful Girl", "Acting", 200);
-        rowItems.add(cards);
-        cards = new Cards("2", "Ananaya Pandy", 20, "https://i0.wp.com/profilepicturesdp.com/wp-content/uploads/2018/06/beautiful-indian-girl-image-for-profile-picture-8.jpg", "cool Minded Girl", "Dancing", 800);
-        rowItems.add(cards);
-        cards = new Cards("3", "Anjali Kasyap", 22, "https://pbs.twimg.com/profile_images/967542394898952192/_M_eHegh_400x400.jpg", "Simple and beautiful Girl", "Singing", 400);
-        rowItems.add(cards);
-        cards = new Cards("4", "Preety Deshmukh", 19, "http://profilepicturesdp.com/wp-content/uploads/2018/07/fb-real-girls-dp-3.jpg", "dashing girl", "swiming", 1308);
-        rowItems.add(cards);
-        cards = new Cards("5", "Srutimayee Sen", 20, "https://dp.profilepics.in/profile_pictures/selfie-girls-profile-pics-dp/selfie-pics-dp-for-whatsapp-facebook-profile-25.jpg", "chulbuli nautankibaj ", "Drawing", 1200);
-        rowItems.add(cards);
-        cards = new Cards("6", "Dikshya Agarawal", 21, "https://pbs.twimg.com/profile_images/485824669732200448/Wy__CJwU.jpeg", "Simple and beautiful Girl", "Sleeping", 700);
-        rowItems.add(cards);
-        cards = new Cards("7", "Sudeshna Roy", 19, "https://talenthouse-res.cloudinary.com/image/upload/c_fill,f_auto,h_640,w_640/v1411380245/user-415406/submissions/hhb27pgtlp9akxjqlr5w.jpg", "Papa's Pari", "Art", 5000);
-        rowItems.add(cards);
-
-        arrayAdapter = new PhotoAdapter(this, R.layout.item, rowItems);
-
-        checkRowItem();
-        updateSwipeCard();
+        insertFromFirebase();
     }
+
+    private void insertFromFirebase() {
+        Log.d(TAG, "Attempting to retrieve data from Firebase");
+
+        // Clear the current list of Cards
+        rowItems = new ArrayList<>();
+
+        roomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "DataSnapshot received from Firebase");
+
+                // Process data from Firebase and populate rowItems
+                for (DataSnapshot roomSnapshot : dataSnapshot.getChildren()) {
+                    try {
+                        String district = roomSnapshot.child("district").getValue(String.class);
+                        // Map the district to the corresponding index in isDistrict
+                        int districtIndex = getDistrictIndex(district);
+                        // Check if the district is enabled in SearchFilter
+                        Log.d(TAG, "Check condition ");
+                        if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
+                            Log.d(TAG, "Not valid district");
+                            Log.d(TAG, district);
+                            continue;
+                        }
+
+
+                        Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
+                        Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
+                        if(searchFilter.calculateDistance(latitude,longitude) > searchFilter.getMaxDistance()) {
+                            Log.d(TAG, "Not valid distance");
+                            continue;
+                        }
+
+                        String priceString = roomSnapshot.child("price").getValue(String.class);
+                        int price = Integer.parseInt(priceString) / 1000;
+                        if(price > searchFilter.getBudget()) {
+                            Log.d(TAG, "Not valid budget");
+                            continue;
+                        }
+
+                        String idHost = roomSnapshot.child("idHost").getValue(String.class);
+                        String address = roomSnapshot.child("address").getValue(String.class);
+                        String DPD = roomSnapshot.child("DPD").getValue(String.class);
+                        if(DPD == null)
+                            DPD = "No description";
+                        List<String> roomImageUrl = new ArrayList<>();
+                        for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
+                            String imageUrl = imageSnapshot.getValue(String.class);
+                            roomImageUrl.add(imageUrl);
+                        }
+                        // Check condition
+
+                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
+                        rowItems.add(roomCard);
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error processing roomSnapshot: " + roomSnapshot.getKey(), e);
+                    }
+                }
+
+                Log.d(TAG, "Finished processing all rooms");
+                Log.d(TAG, "right after fetch size: " + String.valueOf(rowItems.size()));
+                // Notify adapter of the new data
+
+                arrayAdapter = new PhotoAdapter(MainActivity.this, R.layout.item, rowItems);
+                checkRowItem();
+                updateSwipeCard();
+                arrayAdapter.notifyDataSetChanged();
+
+                // Ensure frames are correctly shown or hidden based on data
+                checkRowItem();
+                updateSwipeCard();  // You can update the UI after data is loaded
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
+            }
+        });
+    }
+
+
+
 
     private void checkRowItem() {
         if (rowItems.isEmpty()) {
@@ -187,13 +287,13 @@ public class MainActivity extends Activity {
         if (rowItems.size() != 0) {
             Cards card_item = rowItems.get(0);
 
-            String userId = card_item.getUserId();
+            // String userId = card_item.getUserId();
 
             rowItems.remove(0);
             arrayAdapter.notifyDataSetChanged();
 
             Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
-            btnClick.putExtra("url", card_item.getProfileImageUrl());
+            btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
             startActivity(btnClick);
         }
     }
@@ -202,7 +302,7 @@ public class MainActivity extends Activity {
         if (rowItems.size() != 0) {
             Cards card_item = rowItems.get(0);
 
-            String userId = card_item.getUserId();
+            // String userId = card_item.getUserId();
 
             //check matches
 
@@ -210,7 +310,7 @@ public class MainActivity extends Activity {
             arrayAdapter.notifyDataSetChanged();
 
             Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
-            btnClick.putExtra("url", card_item.getProfileImageUrl());
+            btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
             startActivity(btnClick);
         }
     }
@@ -229,11 +329,73 @@ public class MainActivity extends Activity {
         menuItem.setChecked(true);
     }
 
+    // Helper function to map district string to the corresponding index in isDistrict
+    private int getDistrictIndex(String district) {
+        // Convert the district name to lowercase to make the comparison case-insensitive
+        district = district.toLowerCase().trim();
+
+        // Handle Vietnamese and English district names
+        switch (district) {
+            case "district 1":
+            case "quận 1":
+            case "quan 1":
+                return 1;
+            case "district 2":
+            case "quan 2":
+            case "quận 2":
+                return 2;
+            case "district 3":
+            case "quận 3":
+            case "quan 3":
+                return 3;
+            case "district 4":
+            case "quận 4":
+            case "quan 4":
+                return 4;
+            case "district 5":
+            case "quận 5":
+            case "quan 5":
+                return 5;
+            case "district 6":
+            case "quận 6":
+            case "quan 6":
+                return 6;
+            case "district 7":
+            case "quận 7":
+            case "quan 7":
+                return 7;
+            case "district 8":
+            case "quận 8":
+            case "quan 8":
+                return 8;
+            case "district 9":
+            case "quận 9":
+            case "quan 9":
+                return 9;
+            case "district 10":
+            case "quận 10":
+            case "quan 10":
+                return 10;
+            case "district 11":
+            case "quận 11":
+            case "quan 11":
+                return 11;
+            case "district 12":
+            case "quận 12":
+            case "quan 12":
+                return 12;
+            default:
+                return -1; // Invalid district
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
 
     }
+
+
 
 
 }
