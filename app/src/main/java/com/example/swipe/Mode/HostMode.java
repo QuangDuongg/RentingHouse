@@ -30,7 +30,6 @@ public class HostMode extends AppCompatActivity {
                 Log.d(TAG, "Add Room button clicked");
                 Intent intent = new  Intent(HostMode.this, AddRoomActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
         btnprofile.setOnClickListener(new View.OnClickListener() {
@@ -39,7 +38,6 @@ public class HostMode extends AppCompatActivity {
                 Log.d(TAG, "Profile Room button clicked");
                 Intent intent = new Intent(HostMode.this, ProfileUser.class);
                 startActivity(intent);
-                finish();
             }
         });
         btn_message.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +45,6 @@ public class HostMode extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(HostMode.this, MessageActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
     }

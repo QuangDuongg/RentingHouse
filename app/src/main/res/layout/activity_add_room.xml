@@ -4,7 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="0dp">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ToolbarTheme"
+        android:titleTextColor="@android:color/white"
+        android:elevation="4dp"/>
 
     <Spinner
         android:id="@+id/spinner_district"
@@ -16,7 +24,7 @@
         android:id="@+id/edit_text_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter price"
+        android:hint="Enter room price"
         android:inputType="number"
         android:layout_marginTop="16dp" />
 
@@ -27,11 +35,18 @@
         android:hint="Enter specific address"
         android:layout_marginTop="16dp" />
 
+    <EditText
+        android:id="@+id/edit_text_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter room description"
+        android:layout_marginTop="16dp"/>
+
     <Button
         android:id="@+id/button_choose_images"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose Images"
+        android:text="Choose image"
         android:layout_marginTop="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
