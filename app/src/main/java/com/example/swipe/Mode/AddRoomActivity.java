@@ -22,8 +22,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.swipe.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -154,6 +156,33 @@ public class AddRoomActivity extends AppCompatActivity {
             }
         }
     }
+    private void saveRoomIdToUserLFR(String roomId) {
+        // Lấy userId từ Firebase Authentication
+        String userId = mAuth.getCurrentUser().getUid();
+
+        if (userId != null) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("LFR");
+
+            // Thêm roomId vào danh sách LFR của user
+            userRef.child(roomId).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Room ID saved to user's LFR successfully");
+                    } else {
+                        Log.e(TAG, "Failed to save Room ID to user's LFR");
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Failed to save Room ID to user's LFR", e);
+                }
+            });
+        } else {
+            Log.e(TAG, "User ID is null, cannot save room ID to LFR");
+        }
+    }
 
     private void saveRoomData() {
         String district = spinnerDistrict.getSelectedItem().toString();
@@ -175,7 +204,7 @@ public class AddRoomActivity extends AppCompatActivity {
         roomCount++;
         String roomId = String.valueOf(roomCount);
         DatabaseReference roomRef = databaseReference.child(roomId);
-
+        saveRoomIdToUserLFR(roomId);
         // Lưu thông tin cơ bản
         roomRef.child("district").setValue(district);
         roomRef.child("price").setValue(price);
@@ -220,4 +249,5 @@ public class AddRoomActivity extends AppCompatActivity {
     interface OnCoordinatesObtainedListener {
         void onCoordinatesObtained(double latitude, double longitude);
     }
+
 }
