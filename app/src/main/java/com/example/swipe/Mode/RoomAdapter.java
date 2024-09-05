@@ -71,7 +71,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ItemViewHolder) holder).btnInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ProfileCheckinMain.class);
+                    Intent intent = new Intent(mContext, ViewRoomDetail.class);
                     intent.putExtra("district", card_item.getDistrict());
                     if (card_item.isAnyImageRoom()) {
                         ArrayList<String> roomImageUrls = new ArrayList<>(card_item.getRoomImageUrl());
