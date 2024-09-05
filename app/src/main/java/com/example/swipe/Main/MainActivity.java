@@ -6,11 +6,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import com.example.swipe.Utils.GPS;
+
+import android.telephony.CarrierConfigManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +25,7 @@ import android.widget.Toast;
 
 
 import com.example.swipe.R;
+import com.example.swipe.Utils.GPS;
 import com.example.swipe.Utils.OpenCageGeocoder;
 import com.example.swipe.Utils.PulsatorLayout;
 import com.example.swipe.Utils.SearchFilter;
@@ -41,6 +46,8 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
     private static final int ACTIVITY_NUM = 1;
     final private int MY_PERMISSIONS_REQUEST_LOCATION = 123;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1; // Add this constant
+
     ListView listView;
     List<Cards> rowItems;
     FrameLayout cardFrame, moreFrame;
@@ -51,6 +58,7 @@ public class MainActivity extends Activity {
     private DatabaseReference readInfoUser;
     private String userID;
     private SearchFilter searchFilter;
+    private GPS gps;
     private com.example.swipe.Utils.OpenCageGeocoder OpenCageGeocoder;
 
     @Override
@@ -69,6 +77,31 @@ public class MainActivity extends Activity {
 
         setupTopNavigationView();
 
+        // get the temporary coordinate
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Not granted");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            Log.d(TAG, "Granted");
+            // Initialize GPS only if permissions are granted
+            gps = new GPS(getApplicationContext());
+            Location location = gps.getLocation();
+            if (location != null) {
+                Log.d(TAG, "Coordinate: " + String.valueOf(location.getLatitude()) + " " + String.valueOf(location.getLongitude()));
+                // Use the location data
+                searchFilter.setLatitudeUser(gps.getLocation().getLatitude());
+                searchFilter.setLongitudeUser(gps.getLocation().getLongitude());
+            } else {
+                Log.d(TAG, "Location is null, unable to get coordinates");
+                Toast.makeText(this, "Waiting for location updates...", Toast.LENGTH_SHORT).show();
+                // GPS will fetch the location once available and log it
+            }
+        }
 
         Intent intent = getIntent();
         userID = intent.getStringExtra("userID");
@@ -150,6 +183,7 @@ public class MainActivity extends Activity {
                         // Check condition
 
                         Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
+                        Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to ( " + latitude + ", " + longitude + ") is: " + String.valueOf(searchFilter.calculateDistance(latitude, longitude)));
                         rowItems.add(roomCard);
 
                     } catch (Exception e) {
@@ -204,6 +238,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -218,7 +253,15 @@ public class MainActivity extends Activity {
                     }
                 }
             }
-
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permissions granted, initialize GPS
+                    gps = new GPS(getApplicationContext());
+                } else {
+                    // Permissions denied, handle appropriately
+                    Toast.makeText(this, "Location permission is required to use this feature.", Toast.LENGTH_SHORT).show();
+                }
+            }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
