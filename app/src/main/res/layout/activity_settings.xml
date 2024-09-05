@@ -6,7 +6,6 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <!--<include layout="@layout/layout_top_navigation_back"/>-->
     <include layout="@layout/layout_top_navigation_back" />
 
     <ScrollView
