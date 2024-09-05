@@ -126,6 +126,7 @@ public class SearchFilter {
 
         // Distance in kilometers
         double distance = R * c;
+        distance = ((distance * 10) - (distance * 10) % 5) / 10;
 
         // Return the distance
         return (distance < 1) ? 1.0 : distance;
