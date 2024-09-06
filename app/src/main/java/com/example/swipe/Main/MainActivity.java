@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class MainActivity extends Activity {
     private SearchFilter searchFilter;
     private GPS gps;
     private com.example.swipe.Utils.OpenCageGeocoder OpenCageGeocoder;
+    private ImageButton cmt_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +130,9 @@ public class MainActivity extends Activity {
         /////////////////// Insert from FireBase /////////////////////////////////////////////////////////////////
         rowItems = new ArrayList<Cards>();
         insertFromFirebase();
+
+        cmt_btn = findViewById(R.id.comment_btn);
+
     }
 
     private void insertFromFirebase() {
@@ -152,7 +157,7 @@ public class MainActivity extends Activity {
                         if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
                             Log.d(TAG, "Not valid district");
                             Log.d(TAG, district);
-                            //continue;
+                            continue;
                         }
 
 
@@ -182,7 +187,7 @@ public class MainActivity extends Activity {
                         }
                         // Check condition
 
-                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
+                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), idHost);
                         Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to ( " + latitude + ", " + longitude + ") is: " + String.valueOf(searchFilter.calculateDistance(latitude, longitude)));
                         rowItems.add(roomCard);
 
@@ -348,7 +353,6 @@ public class MainActivity extends Activity {
             // String userId = card_item.getUserId();
 
             //check matches
-
             rowItems.remove(0);
             arrayAdapter.notifyDataSetChanged();
 

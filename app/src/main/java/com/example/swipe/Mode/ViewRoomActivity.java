@@ -64,11 +64,12 @@ public class ViewRoomActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize Firebase components
-       /* mAuth = FirebaseAuth.getInstance();
-        userId = mAuth.getCurrentUser().getUid();*/
+        mAuth = FirebaseAuth.getInstance();
+        userId = mAuth.getCurrentUser().getUid();
+        Log.d(TAG, userId);
         // specific to test
         userRef = FirebaseDatabase.getInstance().getReference("users")
-                .child("tFI9FlXwVTWb1tgG7Nu4WS47Eq33") // will use the userId
+                .child(userId) // will use the userId tFI9FlXwVTWb1tgG7Nu4WS47Eq33
                 .child("LFR");
 
         // Set GridLayoutManager with 2 columns
@@ -89,90 +90,99 @@ public class ViewRoomActivity extends AppCompatActivity {
                 // Retrieve the list of indexRooms
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Integer roomIndex = Integer.valueOf(snapshot.getKey());
-                    Log.d(TAG, "For Index" + roomIndex);
                     indexRoomsList.add(roomIndex);
                 }
                 DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
                 roomList.clear();
                 Log.d(TAG, "Init roomList");
                 roomList = new ArrayList<>();
-                roomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d(TAG, "DataSnapshot received from Firebase");
+                // Use indexRoomsList to fetch room data
+                for (int i = 0; i < indexRoomsList.size(); i++) {
+                    int roomIndex = indexRoomsList.get(i); // Get the correct room index
 
-                        // Process data from Firebase and populate rowItems
-                        for (DataSnapshot roomSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "For roomIndex: " + roomIndex);
+
+                    roomsRef.child(String.valueOf(roomIndex)).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
+                            Log.d(TAG, "DataSnapshot received from Firebase for room index " + roomIndex);
+
+                            // Process data from Firebase and populate roomList
                             try {
-                                String district = roomSnapshot.child("district").getValue(String.class);
+                                String district = dataSnapshot2.child("district").getValue(String.class);
                                 // Map the district to the corresponding index in isDistrict
                                 int districtIndex = getDistrictIndex(district);
                                 // Check if the district is enabled in SearchFilter
-                                Log.d(TAG, "Check condition ");
                                 if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
                                     Log.d(TAG, "Not valid district");
-                                    Log.d(TAG, district);
-                                    //continue;
                                 }
 
-
-                                Double latitude = roomSnapshot.child("latitude").getValue(Double.class);
-                                Double longitude = roomSnapshot.child("longitude").getValue(Double.class);
-                                if(searchFilter.calculateDistance(latitude,longitude) > searchFilter.getMaxDistance()) {
+                                Double latitude = dataSnapshot2.child("latitude").getValue(Double.class);
+                                Double longitude = dataSnapshot2.child("longitude").getValue(Double.class);
+                                if (searchFilter.calculateDistance(latitude, longitude) > searchFilter.getMaxDistance()) {
                                     Log.d(TAG, "Not valid distance");
-                                    //continue;
                                 }
 
-                                String priceString = roomSnapshot.child("price").getValue(String.class);
-                                int price = Integer.parseInt(priceString) / 1000;
-                                if(price > searchFilter.getBudget()) {
+                                String priceString = dataSnapshot2.child("price").getValue(String.class);
+                                int price = Integer.parseInt(priceString);
+                                if (price > searchFilter.getBudget()) {
                                     Log.d(TAG, "Not valid budget");
-                                    // continue;
                                 }
 
-                                String idHost = roomSnapshot.child("idHost").getValue(String.class);
-                                String address = roomSnapshot.child("address").getValue(String.class);
-                                String DPD = roomSnapshot.child("description").getValue(String.class);
-                                if(DPD == null)
-                                    DPD = "No description";
+                                String idHost = dataSnapshot2.child("idHost").getValue(String.class);
+                                String address = dataSnapshot2.child("address").getValue(String.class);
+                                String DPD = dataSnapshot2.child("description").getValue(String.class);
+                                if (DPD == null) DPD = "No description";
+
+                                // Retrieve the list of image URLs
                                 List<String> roomImageUrl = new ArrayList<>();
-                                for (DataSnapshot imageSnapshot : roomSnapshot.child("imageUrls").getChildren()) {
+                                for (DataSnapshot imageSnapshot : dataSnapshot2.child("imageUrls").getChildren()) {
                                     String imageUrl = imageSnapshot.getValue(String.class);
                                     roomImageUrl.add(imageUrl);
                                 }
-                                // Check condition
 
-                                Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude));
-                                Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to ( " + latitude + ", " + longitude + ") is: " + String.valueOf(searchFilter.calculateDistance(latitude, longitude)));
+                                // Create the room card and add it to the list
+                                Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), userId);
+                                Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to (" + latitude + ", " + longitude + ") is: " + searchFilter.calculateDistance(latitude, longitude));
                                 roomList.add(roomCard);
+                                Log.d(TAG, "Size RoomList: " + String.valueOf(roomList.size()));
+
+                                roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                                recyclerView.setAdapter(roomAdapter);
+                                roomAdapter.notifyDataSetChanged();
 
                             } catch (Exception e) {
-                                Log.e(TAG, "Error processing roomSnapshot: " + roomSnapshot.getKey(), e);
+                                Log.e(TAG, "Error processing dataSnapshot2: " + dataSnapshot2.getKey(), e);
                             }
+
+
                         }
 
-                        Log.d(TAG, "Finished processing all rooms");
-                        Log.d(TAG, "right after fetch size: " + String.valueOf(roomList.size()));
-                        // Notify adapter of the new data
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
+                        }
+                    });
+                }
 
-                        roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                        recyclerView.setAdapter(roomAdapter);
-                        roomAdapter.notifyDataSetChanged();
-                    }
-
+                Log.d(TAG, "Outside Size RoomList: " + String.valueOf(roomList.size()));
+                /*roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e(TAG, "Failed to read data from Firebase", databaseError.toException());
+                    public void onClick(View view) {
+                        Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
+                        startActivity(intent);
                     }
                 });
+                recyclerView.setAdapter(roomAdapter);
+                roomAdapter.notifyDataSetChanged();*/
 
-                // Now you have the indexRoomsList with all the room indexes
+                // Log the indexRoomsList to confirm fetching
                 Log.d(TAG, "Firebase IndexRooms: " + indexRoomsList);
             }
 

@@ -9,14 +9,16 @@ public class Cards {
     private List<String> roomImageUrl;
     private double distance, latitude, longitude;
     private int price; // in ratio 1K
+    private String idHost;
 
-    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double distance) {
+    public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double distance, String idHost) {
         this.DPD = DPD;
         this.district = district;
         this.roomImageUrl = roomImageUrl;
         this.address = address;
         this.price = price;
         this.distance = distance;
+        this.idHost = idHost;
     }
 
     public Cards(String DPD, String district, List<String> roomImageUrl, String address, int price, double latitude, double longitude) {
@@ -99,5 +101,13 @@ public class Cards {
 
     public boolean isAnyImageRoom (){
         return !this.roomImageUrl.isEmpty();
+    }
+
+    public String getIdHost() {
+        return idHost;
+    }
+
+    public void setIdHost(String idHost) {
+        this.idHost = idHost;
     }
 }

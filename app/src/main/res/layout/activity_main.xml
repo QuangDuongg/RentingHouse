@@ -71,7 +71,7 @@
                         android:src="@drawable/ic_dislike" />
 
                     <ImageButton
-                        android:id="@+id/commentbtn"
+                        android:id="@+id/comment_btn"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_alignParentTop="true"

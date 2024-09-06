@@ -112,7 +112,7 @@ public class AddRoomActivity extends AppCompatActivity {
 
         buttonDone.setOnClickListener(v -> {
             saveRoomData();
-            startActivity(new Intent(AddRoomActivity.this, HostMode.class));
+            startActivity(new Intent(AddRoomActivity.this, ViewRoomActivity.class));
         });
     }
 
@@ -120,8 +120,8 @@ public class AddRoomActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // Trở về màn hình HostMode
-            Intent intent = new Intent(this, HostMode.class);
+            // Trở về màn hình ViewRoomActivity
+            Intent intent = new Intent(this, ViewRoomActivity.class);
             NavUtils.navigateUpTo(this, intent);
             return true;
         }
