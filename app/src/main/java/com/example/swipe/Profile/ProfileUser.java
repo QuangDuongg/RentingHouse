@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.swipe.Login.Login;
+import com.example.swipe.Main.MainActivity;
 import com.example.swipe.Message.MessageActivity;
 import com.example.swipe.Mode.HostMode;
 import com.example.swipe.Mode.TenantMode;
@@ -161,7 +162,7 @@ public class ProfileUser extends AppCompatActivity {
                     Intent intent = new Intent(ProfileUser.this, HostMode.class);
                     startActivity(intent);
                 } else if ("tenant".equals(userRole)) {
-                    Intent intent = new Intent(ProfileUser.this, TenantMode.class);
+                    Intent intent = new Intent(ProfileUser.this, MainActivity.class);
                     startActivity(intent);
                 }
                 finish();
