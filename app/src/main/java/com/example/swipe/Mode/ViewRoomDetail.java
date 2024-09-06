@@ -18,6 +18,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,15 +44,22 @@ public class ViewRoomDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_checkin_main);
+        setContentView(R.layout.activity_view_room_detail);
 
         mContext = com.example.swipe.Mode.ViewRoomDetail.this;
 
-        TextView DPD = findViewById(R.id.DPD_beforematch);
-        TextView profileDistrict = findViewById(R.id.District_main);
-        TextView profileAddress = findViewById(R.id.address_beforematch);
-        TextView profilePrice = findViewById(R.id.price_beforematch);
+        EditText DPD = findViewById(R.id.DPD_beforematch);
+        EditText profileDistrict = findViewById(R.id.District_main);
+        EditText profileAddress = findViewById(R.id.address_beforematch);
+        EditText profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
+        ImageButton back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
 
         Intent intent = getIntent();
@@ -63,12 +72,88 @@ public class ViewRoomDetail extends AppCompatActivity {
         if(!Objects.equals(description, "No description"))
             description = "Description: " + description;
 
+
         DPD.setText(description);
+        DPD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (String.valueOf(DPD.getText()).equals("No description")) {
+                    DPD.setText("");  // Clear the text
+                }
+            }
+        });
+        DPD.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // Check if the EditText is empty when focus is lost
+                    if (DPD.getText().toString().trim().isEmpty()) {
+                        DPD.setText("No description");  // Restore "No description"
+                    }
+                }
+            }
+        });
         profileDistance.setText(String.valueOf(distance) + " Km away");
         profileDistrict.setText(district);
         profileAddress.setText("Address: " + address);
-        profilePrice.setText("Price: " + SearchFilter.getInstance().ManipPrice(price));
+        profileAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Remove the "Address: " prefix and show only the address
+                if (profileAddress.getText().toString().startsWith("Address: ")) {
+                    profileAddress.setText(profileAddress.getText().toString().replace("Address: ", ""));
+                }
+            }
+        });
 
+        profileAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // When focus is lost, check if the address is empty
+                    String addressText = profileAddress.getText().toString().trim();
+
+                    // Add the "Address: " prefix again
+                    if (!addressText.isEmpty() && !addressText.startsWith("Address: ")) {
+                        profileAddress.setText("Address: " + addressText);
+                    }
+                }
+            }
+        });
+        final String pricePrefix = "Price: ";  // Define the prefix
+        final String priceHint = "(in 1000 VND unit)";  // Define the hint text
+
+        profilePrice.setText(pricePrefix + SearchFilter.getInstance().ManipPrice(price));
+
+        profilePrice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Remove the "Price: " prefix and show only the price
+                if (profilePrice.getText().toString().startsWith(pricePrefix)) {
+                    profilePrice.setText(String.valueOf(price));  // Show only the price value
+                    profilePrice.setHint(priceHint);  // Show the hint when clicked
+                }
+            }
+        });
+
+        profilePrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // When focus is lost, check if the price is empty
+                    String priceText = profilePrice.getText().toString().trim();
+
+                    // Add the "Price: " prefix again if it's not empty and doesn't already start with the prefix
+                    if (!priceText.isEmpty() && !priceText.startsWith(pricePrefix)) {
+                        profilePrice.setText(pricePrefix + SearchFilter.getInstance().ManipPrice(price));
+                        profilePrice.setHint("");  // Clear the hint after editing is done
+                    }
+                } else {
+                    // If gaining focus, show the hint
+                    profilePrice.setHint(priceHint);
+                }
+            }
+        });
 
 
         profileImageUrl = intent.getStringArrayListExtra("photo");

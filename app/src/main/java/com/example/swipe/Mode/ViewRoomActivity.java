@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,12 +44,20 @@ public class ViewRoomActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private String userId;
     private SearchFilter searchFilter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_room);
         searchFilter = SearchFilter.getInstance();
 
+        ImageButton back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewRoom);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -56,10 +65,9 @@ public class ViewRoomActivity extends AppCompatActivity {
         // Initialize Firebase components
        /* mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();*/
-        // userRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("LFR");
         // specific to test
         userRef = FirebaseDatabase.getInstance().getReference("users")
-                .child("tFI9FlXwVTWb1tgG7Nu4WS47Eq33") // will get the userID
+                .child("tFI9FlXwVTWb1tgG7Nu4WS47Eq33") // will use the userId
                 .child("indexRooms");
 
         // Test add arr index Rooms
