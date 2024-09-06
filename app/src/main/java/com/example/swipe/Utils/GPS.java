@@ -20,24 +20,37 @@ public class GPS implements LocationListener {
 
     public GPS(Context mContext) {
         this.mContext = mContext;
-
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-            Log.d("GPS", "Not ok");
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d("GPS", "Permission not granted");
             return;
         }
 
-        mlocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        onLocationChanged(mlocation);
-    }
+        // Try to get the last known location from GPS provider or network
+        mlocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (mlocation == null) {
+            mlocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
 
+        if (mlocation != null) {
+            onLocationChanged(mlocation);
+        } else {
+            Log.d("GPS", "Location is null, requesting location updates");
+            // Request updates until we get a proper location
+            mLocationManager.requestLocationUpdates(mProvider, 1000, 1, this);  // Request updates
+        }
+    }
 
     @Override
     public void onLocationChanged(Location location) {
-        this.mlocation = mlocation;
+        this.mlocation = location;
+        if (location != null) {
+            Log.d("GPS", "Location updated: " + location.getLatitude() + ", " + location.getLongitude());
+            mLocationManager.removeUpdates(this);  // Stop updates once location is found
+        }
     }
 
     @Override

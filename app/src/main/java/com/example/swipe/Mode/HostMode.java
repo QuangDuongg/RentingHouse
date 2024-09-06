@@ -14,7 +14,7 @@ import com.example.swipe.R;
 public class HostMode extends AppCompatActivity {
 
     private static final String TAG = "HostMode";
-    private Button buttonAddRoom;
+    private Button buttonViewRoom;
     private Button btnprofile,btn_message;
 
     @Override
@@ -22,13 +22,13 @@ public class HostMode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_mode);
         btn_message=findViewById(R.id.button_message);
-        buttonAddRoom = findViewById(R.id.button_add_room);
+        buttonViewRoom = findViewById(R.id.button_view_room);
         btnprofile=findViewById(R.id.button_profile);
-        buttonAddRoom.setOnClickListener(new View.OnClickListener() {
+        buttonViewRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Add Room button clicked");
-                Intent intent = new  Intent(HostMode.this, AddRoomActivity.class);
+                Intent intent = new  Intent(HostMode.this, ViewRoomActivity.class);
                 startActivity(intent);
             }
         });

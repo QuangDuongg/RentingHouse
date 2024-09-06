@@ -105,31 +105,38 @@ public class SearchFilter {
     }
 
     public double calculateDistance(double lat2, double lon2) {
-        double theta = this.longitudeUser - lon2;
-        double dist = Math.sin(deg2rad(this.latitudeUser)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(this.latitudeUser)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515;
+        // Radius of the Earth in kilometers
+        final double R = 6371.0;
 
-        double dis = (double) Math.floor(dist);
-        if (dis < 1) {
-            return 1;
-        }
-        return dis;
+        // Convert latitude and longitude from degrees to radians
+        double lat1 = Math.toRadians(this.latitudeUser);
+        double lon1 = Math.toRadians(this.longitudeUser);
+        lat2 = Math.toRadians(lat2);
+        lon2 = Math.toRadians(lon2);
+
+        // Difference between the two points
+        double dLat = lat2 - lat1;
+        double dLon = lon2 - lon1;
+
+        // Haversine formula
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Distance in kilometers
+        double distance = R * c;
+        distance = ((distance * 10) - (distance * 10) % 5) / 10;
+
+        // Return the distance
+        return (distance < 1) ? 1.0 : distance;
     }
+
 
     public boolean checkInDistance(double lat2, double lon2){
         if(calculateDistance(lat2, lon2) <= this.maxDistance)
             return true;
         return false;
-    }
-
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    private double rad2deg(double rad) {
-        return (rad * 180 / Math.PI);
     }
 
     public String ManipPrice (int price){

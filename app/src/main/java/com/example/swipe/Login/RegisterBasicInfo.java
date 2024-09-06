@@ -126,12 +126,6 @@ public class RegisterBasicInfo extends AppCompatActivity {
                         longtitude = location.getLongitude();
                     }
                     Log.d(TAG + "Location after manip", latitude + "   " + longtitude);
-
-                    // Intent intent = new Intent(RegisterBasicInfo.this, RegisterHostOrTenant.class);
-                    // User user = new User("", "", "", "", email, username, false, false, false, false, "", "", "", latitude, longtitude);
-                    // intent.putExtra("password", password);
-                    // intent.putExtra("classUser", user);
-                    // startActivity(intent);
                 }
             }
         });
@@ -204,10 +198,6 @@ public class RegisterBasicInfo extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         mContext = RegisterBasicInfo.this;
     }
-
-    // public void onLoginClicked(View view) {
-    //     startActivity(new Intent(getApplicationContext(), RegisterHostOrTenant.class));
-    // }
 
     public void showToast(String str) {
         Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
