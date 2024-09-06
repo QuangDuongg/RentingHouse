@@ -68,25 +68,7 @@ public class ViewRoomActivity extends AppCompatActivity {
         // specific to test
         userRef = FirebaseDatabase.getInstance().getReference("users")
                 .child("tFI9FlXwVTWb1tgG7Nu4WS47Eq33") // will use the userId
-                .child("indexRooms");
-
-        // Test add arr index Rooms
-       /* List<Integer> idRooms = new ArrayList<>();
-        idRooms.add(1);
-        idRooms.add(2);
-        idRooms.add(3);
-        idRooms.add(4);
-        userRef.child("indexRooms").setValue(idRooms).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d("Firebase", "Indexed rooms saved successfully.");
-                } else {
-                    Log.e("Firebase", "Error saving indexed rooms: ", task.getException());
-                }
-            }
-        });;*/
-        // End test
+                .child("LFR");
 
         // Set GridLayoutManager with 2 columns
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -105,11 +87,13 @@ public class ViewRoomActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Retrieve the list of indexRooms
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Integer roomIndex = snapshot.getValue(Integer.class);
+                    Integer roomIndex = Integer.valueOf(snapshot.getKey());
+                    Log.d(TAG, "For Index" + roomIndex);
                     indexRoomsList.add(roomIndex);
                 }
                 DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
                 roomList.clear();
+                Log.d(TAG, "Init roomList");
                 roomList = new ArrayList<>();
                 roomsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
