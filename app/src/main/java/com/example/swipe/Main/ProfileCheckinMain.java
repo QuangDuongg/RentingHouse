@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,13 @@ public class ProfileCheckinMain extends AppCompatActivity {
         setContentView(R.layout.activity_profile_checkin_main);
 
         mContext = ProfileCheckinMain.this;
+        ImageButton back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         TextView DPD = findViewById(R.id.DPD_beforematch);
         TextView profileDistrict = findViewById(R.id.District_main);

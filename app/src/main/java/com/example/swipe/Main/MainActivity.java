@@ -1,6 +1,8 @@
 package com.example.swipe.Main;
 
 
+import static android.widget.Toast.LENGTH_LONG;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -309,9 +311,10 @@ public class MainActivity extends Activity {
             @Override
             public void onRightCardExit(Object dataObject) {
                 Cards obj = (Cards) dataObject;
-
                 //check matches
                 checkRowItem();
+                // add to cmt
+                Toast.makeText(getApplicationContext(), "Right", LENGTH_LONG).show();
 
             }
 
@@ -334,7 +337,7 @@ public class MainActivity extends Activity {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
-                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Clicked", LENGTH_LONG).show();
             }
         });
     }
