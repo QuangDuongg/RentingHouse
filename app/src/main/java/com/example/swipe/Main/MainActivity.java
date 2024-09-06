@@ -62,6 +62,8 @@ public class MainActivity extends Activity {
     private GPS gps;
     private com.example.swipe.Utils.OpenCageGeocoder OpenCageGeocoder;
     private ImageButton cmt_btn;
+    private int currentItemIndex = 0;  // Track the current item being shown
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +134,13 @@ public class MainActivity extends Activity {
         insertFromFirebase();
 
         cmt_btn = findViewById(R.id.comment_btn);
-
+        cmt_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String idHost = rowItems.get(currentItemIndex).getIdHost();
+                // LKVuong add Mess
+            }
+        });
     }
 
     private void insertFromFirebase() {
@@ -278,10 +286,18 @@ public class MainActivity extends Activity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                Log.d("LIST", "removed object!");
+                // This is the simplest way to delete an object from the Adapter
+                Log.d("LIST", "Removed object!");
+
+                // Remove the first item
                 rowItems.remove(0);
+                currentItemIndex++;
+                // Notify the adapter about the change
                 arrayAdapter.notifyDataSetChanged();
+
+                // Force the view to refresh by setting the adapter again
+                final SwipeFlingAdapterView flingContainer = findViewById(R.id.frame);
+                flingContainer.setAdapter(arrayAdapter);  // Reset the adapter
             }
 
             @Override
@@ -335,16 +351,30 @@ public class MainActivity extends Activity {
         if (rowItems.size() != 0) {
             Cards card_item = rowItems.get(0);
 
-            // String userId = card_item.getUserId();
-
             rowItems.remove(0);
             arrayAdapter.notifyDataSetChanged();
+            checkRowItem();
+            updateSwipeCard();
 
             Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
             btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
             startActivity(btnClick);
+
+            final SwipeFlingAdapterView flingContainer = findViewById(R.id.frame);
+            flingContainer.setAdapter(arrayAdapter);  // Reset the adapter
+            View view = flingContainer.getSelectedView();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Refresh or reload data if necessary
+            arrayAdapter.notifyDataSetChanged();
+        }
+    }
+
 
     public void LikeBtn(View v) {
         if (rowItems.size() != 0) {
@@ -356,9 +386,9 @@ public class MainActivity extends Activity {
             rowItems.remove(0);
             arrayAdapter.notifyDataSetChanged();
 
-            Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
+            Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
             btnClick.putExtra("url", card_item.getRoomImageUrl().get(0));
-            startActivity(btnClick);
+            startActivityForResult(btnClick, 1);
         }
     }
 

@@ -81,15 +81,21 @@
             android:exported="false" /> <!-- Login Activity - Launcher Activity -->
         <activity
             android:name=".Main.MainActivity"
-            android:exported="true" /> <!-- MainActivity -->
-        <activity
-            android:name=".Login.Login"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity> <!-- MainActivity -->
+        <activity
+            android:name=".Login.Login"
+            android:exported="false" >
+
+        </activity>
+        <activity
+            android:name=".Main.BtnDislikeActivity"
+            android:exported="false" >
         </activity>
     </application>
 
