@@ -50,6 +50,7 @@ public class PhotoAdapter extends ArrayAdapter<Cards> {
                     ArrayList<String> roomImageUrls = new ArrayList<>(card_item.getRoomImageUrl());
                     intent.putStringArrayListExtra("photo", roomImageUrls);
                 }
+                intent.putExtra("idHost",card_item.getIdHost());
                 intent.putExtra("address", card_item.getAddress());
                 intent.putExtra("price", card_item.getPrice());
                 intent.putExtra("distance", card_item.getDistance());
