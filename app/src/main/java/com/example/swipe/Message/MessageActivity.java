@@ -27,7 +27,7 @@ public class MessageActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private MainPagerAdapter mainPagerAdapter;
     private Toolbar toolbar;
-    private String userRole; // Biến lưu role của người dùng
+    private String userRole;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
 
@@ -36,19 +36,15 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        // Khởi tạo FirebaseAuth và DatabaseReference
         mAuth = FirebaseAuth.getInstance();
         String userId = mAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
 
-        // Lấy role của người dùng từ Firebase
         getUserRole();
 
-        // Thiết lập Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Hiển thị nút back trên Toolbar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -60,7 +56,6 @@ public class MessageActivity extends AppCompatActivity {
         mainPagerAdapter = new MainPagerAdapter(this);
         viewPager.setAdapter(mainPagerAdapter);
 
-        // Thiết lập TabLayoutMediator để gắn tab vào ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
@@ -75,11 +70,9 @@ public class MessageActivity extends AppCompatActivity {
             }
         }).attach();
 
-        // Đặt trang mặc định là "My Chats" (vị trí 0)
         viewPager.setCurrentItem(0);
     }
 
-    // Hàm để lấy role của người dùng từ Firebase Database
     private void getUserRole() {
         userRef.child("role").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -89,22 +82,18 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
             }
         });
     }
 
-    // Xử lý sự kiện khi nút back được nhấn
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             // Kiểm tra role của người dùng và chuyển hướng
             if ("host".equals(userRole)) {
-                // Chuyển về HostMode nếu role là host
                 Intent intent = new Intent(MessageActivity.this, HostMode.class);
                 startActivity(intent);
             } else if ("tenant".equals(userRole)) {
-                // Chuyển về TenantMode nếu role là tenant
                 Intent intent = new Intent(MessageActivity.this, MainActivity.class);
                 startActivity(intent);
             }

@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         app:title="Message"
-        app:titleTextColor="@android:color/white" />
+        app:titleTextColor="@android:color/white"
+        android:theme="@style/ToolbarTheme"
+        android:titleTextColor="@android:color/white"/>
 
     <!-- TabLayout và ViewPager2 để chuyển đổi giữa các tab -->
     <com.google.android.material.tabs.TabLayout

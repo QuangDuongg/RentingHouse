@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- Toolbar theme to set back button color to white -->
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item> <!-- Màu cho tiêu đề -->
+        <item name="android:colorControlNormal">@android:color/white</item> <!-- Màu cho nút back -->
+    </style>
+</resources>

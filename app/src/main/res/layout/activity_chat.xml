@@ -5,15 +5,14 @@
     android:orientation="vertical"
     android:padding="0dp">
 
-    <!-- Toolbar để hiển thị avatar, tên người nhận và nút back -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/chatToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ToolbarTheme"
+        android:titleTextColor="@android:color/white">
 
-        <!-- Nút back -->
         <ImageButton
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
@@ -23,7 +22,6 @@
             android:contentDescription="Back"
             android:padding="8dp"/>
 
-        <!-- Avatar của người nhận -->
         <ImageView
             android:id="@+id/avatarImageView"
             android:layout_width="40dp"
@@ -35,7 +33,6 @@
             android:background="@drawable/circle_background"
             android:contentDescription="Avatar"/>
 
-        <!-- Tên của người nhận -->
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
@@ -46,7 +43,6 @@
             android:layout_gravity="center_vertical"/>
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- RecyclerView để hiển thị tin nhắn -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMessages"
         android:layout_width="match_parent"
@@ -54,7 +50,6 @@
         android:layout_weight="1"
         android:scrollbars="vertical"/>
 
-    <!-- Khu vực nhập và gửi tin nhắn -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,13 +61,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Nhập tin nhắn"/>
+            android:hint="Enter message"/>
 
         <Button
             android:id="@+id/buttonSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gửi"/>
+            android:text="Send"/>
     </LinearLayout>
 
 </LinearLayout>

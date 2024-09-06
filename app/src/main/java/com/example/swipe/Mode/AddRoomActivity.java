@@ -1,22 +1,26 @@
 package com.example.swipe.Mode;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.swipe.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,10 +34,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class AddRoomActivity extends AppCompatActivity {
 
@@ -41,7 +45,7 @@ public class AddRoomActivity extends AppCompatActivity {
     private static final int PICK_IMAGES_REQUEST = 1;
 
     private Spinner spinnerDistrict;
-    private EditText editTextPrice, editTextAddress;
+    private EditText editTextPrice, editTextAddress, editTextDescription;
     private Button buttonChooseImages, buttonDone;
     private RecyclerView recyclerView;
 
@@ -57,18 +61,31 @@ public class AddRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_room);
 
+        // Thiết lập Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Thêm nút back vào Toolbar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Add Room for Rent");
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         spinnerDistrict = findViewById(R.id.spinner_district);
         editTextPrice = findViewById(R.id.edit_text_price);
         editTextAddress = findViewById(R.id.edit_text_address);
+        editTextDescription = findViewById(R.id.edit_text_description);
         buttonChooseImages = findViewById(R.id.button_choose_images);
         buttonDone = findViewById(R.id.button_done);
         recyclerView = findViewById(R.id.recycler_view);
+
         mAuth = FirebaseAuth.getInstance();
         imageUriList = new ArrayList<>();
         imageAdapter = new ImageAdapter(imageUriList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(imageAdapter);
-        spinnerDistrict = findViewById(R.id.spinner_district);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.districts, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDistrict.setAdapter(adapter);
@@ -91,22 +108,24 @@ public class AddRoomActivity extends AppCompatActivity {
             }
         });
 
-        buttonChooseImages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Choose Images button clicked");
-                openFileChooser();
-            }
-        });
+        buttonChooseImages.setOnClickListener(v -> openFileChooser());
 
-        buttonDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Done button clicked");
-                saveRoomData();
-                startActivity(new Intent(AddRoomActivity.this, HostMode.class));
-            }
+        buttonDone.setOnClickListener(v -> {
+            saveRoomData();
+            startActivity(new Intent(AddRoomActivity.this, HostMode.class));
         });
+    }
+
+    // Xử lý sự kiện khi nút Back trên Toolbar được nhấn
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // Trở về màn hình HostMode
+            Intent intent = new Intent(this, HostMode.class);
+            NavUtils.navigateUpTo(this, intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void openFileChooser() {
@@ -114,7 +133,7 @@ public class AddRoomActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Pictures"), PICK_IMAGES_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Choose image"), PICK_IMAGES_REQUEST);
     }
 
     @Override
@@ -125,86 +144,18 @@ public class AddRoomActivity extends AppCompatActivity {
             if (data != null) {
                 if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount();
-                    Log.d(TAG, "Multiple images selected: " + count);
                     for (int i = 0; i < count; i++) {
                         Uri imageUri = data.getClipData().getItemAt(i).getUri();
                         imageUriList.add(imageUri);
-                        Log.d(TAG, "Image added: " + imageUri.toString());
                     }
                 } else if (data.getData() != null) {
                     Uri imageUri = data.getData();
                     imageUriList.add(imageUri);
-                    Log.d(TAG, "Single image added: " + imageUri.toString());
                 }
                 imageAdapter.notifyDataSetChanged();
-            } else {
-                Log.d(TAG, "No images selected or request cancelled");
             }
         }
     }
-
-
-    private void saveRoomData() {
-        String district = spinnerDistrict.getSelectedItem().toString();
-        String price = editTextPrice.getText().toString().trim();
-        String address = editTextAddress.getText().toString().trim();
-
-        if (price.isEmpty() || address.isEmpty() || imageUriList.isEmpty()) {
-            Log.w(TAG, "Required fields missing");
-            Toast.makeText(this, "Please fill all fields and choose images", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        roomCount++; // Tăng số lượng phòng hiện tại lên 1
-        String roomId = String.valueOf(roomCount);
-        DatabaseReference roomRef = databaseReference.child(roomId);
-
-        Log.d(TAG, "Saving room data: ID=" + roomId + ", District=" + district + ", Price=" + price + ", Address=" + address);
-
-        roomRef.child("district").setValue(district);
-        roomRef.child("price").setValue(price);
-        roomRef.child("address").setValue(address);
-
-        List<String> imageUrls = new ArrayList<>();
-        for (Uri imageUri : imageUriList) {
-            String fileName = "image_" + System.currentTimeMillis() + ".jpg";
-            StorageReference storageRef = firebaseStorage.getReference().child("rooms/" + roomId + "/" + fileName);
-
-            Log.d(TAG, "Uploading image: " + imageUri.toString());
-
-            storageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        Log.d(TAG, "Image upload successful");
-                        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            imageUrls.add(uri.toString());
-                            Log.d(TAG, "Image URL obtained: " + uri.toString());
-                            if (imageUrls.size() == imageUriList.size()) {
-                                roomRef.child("imageUrls").setValue(imageUrls)
-                                        .addOnCompleteListener(task -> {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "Room added successfully");
-                                                Toast.makeText(AddRoomActivity.this, "Room added successfully!", Toast.LENGTH_SHORT).show();
-
-                                                // Lưu roomId vào LFR của user
-                                                saveRoomIdToUserLFR(roomId);
-
-                                                // Quay lại màn hình trước đó sau khi lưu thành công
-                                                finish();
-                                            } else {
-                                                Log.e(TAG, "Failed to add room to database");
-                                                Toast.makeText(AddRoomActivity.this, "Failed to save room data", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                            }
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to upload image", e);
-                        Toast.makeText(AddRoomActivity.this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
-
     private void saveRoomIdToUserLFR(String roomId) {
         // Lấy userId từ Firebase Authentication
         String userId = mAuth.getCurrentUser().getUid();
@@ -231,6 +182,72 @@ public class AddRoomActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "User ID is null, cannot save room ID to LFR");
         }
+    }
+
+    private void saveRoomData() {
+        String district = spinnerDistrict.getSelectedItem().toString();
+        String price = editTextPrice.getText().toString().trim();
+        String specificAddress = editTextAddress.getText().toString().trim();
+        String description = editTextDescription.getText().toString().trim();
+
+        // Gộp địa chỉ cụ thể + quận + Thành phố Hồ Chí Minh
+        String fullAddress = specificAddress + ", " + district + ", Thành Phố Hồ Chí Minh";
+
+        // Lấy idUser từ Firebase Authentication
+        String userId = mAuth.getCurrentUser().getUid();
+
+        if (price.isEmpty() || specificAddress.isEmpty() || description.isEmpty() || imageUriList.isEmpty()) {
+            Toast.makeText(this, "Please fill in the information and select photos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        roomCount++;
+        String roomId = String.valueOf(roomCount);
+        DatabaseReference roomRef = databaseReference.child(roomId);
+        saveRoomIdToUserLFR(roomId);
+        // Lưu thông tin cơ bản
+        roomRef.child("district").setValue(district);
+        roomRef.child("price").setValue(price);
+        roomRef.child("address").setValue(specificAddress);
+        roomRef.child("description").setValue(description);
+        roomRef.child("idHost").setValue(userId); // Lưu idHost (là userId)
+
+        // Lấy tọa độ từ địa chỉ đầy đủ
+        getCoordinatesFromAddress(fullAddress, (latitude, longitude) -> {
+            roomRef.child("latitude").setValue(latitude);
+            roomRef.child("longitude").setValue(longitude);
+        });
+
+        // Lưu hình ảnh
+        for (Uri imageUri : imageUriList) {
+            String fileName = "image_" + System.currentTimeMillis() + ".jpg";
+            StorageReference storageRef = firebaseStorage.getReference().child("rooms/" + roomId + "/" + fileName);
+
+            storageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> roomRef.child("imageUrls").push().setValue(uri.toString())))
+                    .addOnFailureListener(e -> Toast.makeText(AddRoomActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show());
+        }
+    }
+
+
+
+    // Sử dụng Geocoder để lấy tọa độ từ địa chỉ
+    private void getCoordinatesFromAddress(String address, OnCoordinatesObtainedListener listener) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                listener.onCoordinatesObtained(location.getLatitude(), location.getLongitude());
+            } else {
+                Toast.makeText(this, "Không tìm thấy tọa độ", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to get coordinates", e);
+        }
+    }
+    interface OnCoordinatesObtainedListener {
+        void onCoordinatesObtained(double latitude, double longitude);
     }
 
 }
