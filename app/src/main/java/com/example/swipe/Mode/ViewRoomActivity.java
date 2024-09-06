@@ -2,6 +2,7 @@ package com.example.swipe.Mode;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -131,7 +132,7 @@ public class ViewRoomActivity extends AppCompatActivity {
 
                                 String idHost = roomSnapshot.child("idHost").getValue(String.class);
                                 String address = roomSnapshot.child("address").getValue(String.class);
-                                String DPD = roomSnapshot.child("DPD").getValue(String.class);
+                                String DPD = roomSnapshot.child("description").getValue(String.class);
                                 if(DPD == null)
                                     DPD = "No description";
                                 List<String> roomImageUrl = new ArrayList<>();
@@ -157,11 +158,8 @@ public class ViewRoomActivity extends AppCompatActivity {
                         roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                // Handle "Add Room" button click here
-                                List<String> tmpLink = new ArrayList<>();
-                                tmpLink.add("https://www.thespruce.com/thmb/iMt63n8NGCojUETr6-T8oj-5-ns=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/PAinteriors-7-cafe9c2bd6be4823b9345e591e4f367f.jpg");
-                                roomList.add(new Cards("New Room", "Unknown km", tmpLink,"",1000,2.0));
-                                roomAdapter.notifyItemInserted(roomList.size());  // Notify adapter of new item
+                                Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
+                                startActivity(intent);
                             }
                         });
                         recyclerView.setAdapter(roomAdapter);
