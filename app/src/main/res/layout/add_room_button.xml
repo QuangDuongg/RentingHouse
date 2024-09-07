@@ -10,5 +10,9 @@
         android:id="@+id/buttonAddRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Room" />
+        android:text="Add Room"
+        android:drawableStart="@drawable/ic_add_room"
+        android:drawablePadding="8dp"
+    android:gravity="center" />
+
 </LinearLayout>
