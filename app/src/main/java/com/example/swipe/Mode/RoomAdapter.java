@@ -81,6 +81,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     intent.putExtra("price", card_item.getPrice());
                     intent.putExtra("distance", card_item.getDistance());
                     intent.putExtra("DPD", card_item.getDPD());
+                    intent.putExtra("indexRoom", card_item.getIndexRoom());
                     mContext.startActivity(intent);
                 }
             });

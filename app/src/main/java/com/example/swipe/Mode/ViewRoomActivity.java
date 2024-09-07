@@ -10,30 +10,26 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swipe.Main.Cards;
-import com.example.swipe.Main.MainActivity;
-import com.example.swipe.Main.PhotoAdapter;
 import com.example.swipe.R;
 import com.example.swipe.Utils.SearchFilter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewRoomActivity extends AppCompatActivity {
+    private static final int VIEW_ROOM_DETAIL_REQUEST_CODE = 12;
     private static final String TAG = "ViewRoomActivity";
     private RecyclerView recyclerView;
     private RoomAdapter roomAdapter;
@@ -42,7 +38,6 @@ public class ViewRoomActivity extends AppCompatActivity {
     // Firebase Variable
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
-    private StorageReference storageRef;
     private String userId;
     private SearchFilter searchFilter;
 
@@ -53,66 +48,48 @@ public class ViewRoomActivity extends AppCompatActivity {
         searchFilter = SearchFilter.getInstance();
 
         ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
+
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewRoom);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setHasFixedSize(true); // Improve performance if the layout size is fixed
 
         // Initialize Firebase components
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
         Log.d(TAG, userId);
-        // specific to test
         userRef = FirebaseDatabase.getInstance().getReference("users")
-                .child(userId) // will use the userId tFI9FlXwVTWb1tgG7Nu4WS47Eq33
+                .child(userId)
                 .child("LFR");
 
-        // Set GridLayoutManager with 2 columns
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
-
-        // Set fixed size to improve performance (if the size is fixed)
-        recyclerView.setHasFixedSize(true);
-
-        // Initialize Room list and add some data (you can dynamically add items here)
+        // Initialize Room list
         roomList = new ArrayList<>();
+        fetchRoomData();  // Fetch initial room data
+    }
 
-        // get the arrayIndexRoom from Firebase
+    // Fetch room data from Firebase
+    private void fetchRoomData() {
+        roomList.clear(); // Clear the current list to avoid duplication
         List<Integer> indexRoomsList = new ArrayList<>();
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Retrieve the list of indexRooms
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Integer roomIndex = Integer.valueOf(snapshot.getKey());
                     indexRoomsList.add(roomIndex);
                 }
+
                 DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
-                roomList.clear();
-                Log.d(TAG, "Init roomList");
-                roomList = new ArrayList<>();
-                // Use indexRoomsList to fetch room data
-                for (int i = 0; i < indexRoomsList.size(); i++) {
-                    int roomIndex = indexRoomsList.get(i); // Get the correct room index
-
-                    Log.d(TAG, "For roomIndex: " + roomIndex);
-
+                roomList.clear(); // Clear the list before refilling it
+                for (int roomIndex : indexRoomsList) {
                     roomsRef.child(String.valueOf(roomIndex)).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
-                            Log.d(TAG, "DataSnapshot received from Firebase for room index " + roomIndex);
-
-                            // Process data from Firebase and populate roomList
                             try {
                                 String district = dataSnapshot2.child("district").getValue(String.class);
-                                // Map the district to the corresponding index in isDistrict
                                 int districtIndex = getDistrictIndex(district);
-                                // Check if the district is enabled in SearchFilter
                                 if (districtIndex < 0 || districtIndex > 12 || !searchFilter.getIsDistrictIndex(districtIndex)) {
                                     Log.d(TAG, "Not valid district");
                                 }
@@ -134,34 +111,19 @@ public class ViewRoomActivity extends AppCompatActivity {
                                 String DPD = dataSnapshot2.child("description").getValue(String.class);
                                 if (DPD == null) DPD = "No description";
 
-                                // Retrieve the list of image URLs
                                 List<String> roomImageUrl = new ArrayList<>();
                                 for (DataSnapshot imageSnapshot : dataSnapshot2.child("imageUrls").getChildren()) {
                                     String imageUrl = imageSnapshot.getValue(String.class);
                                     roomImageUrl.add(imageUrl);
                                 }
 
-                                // Create the room card and add it to the list
-                                Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), userId);
-                                Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to (" + latitude + ", " + longitude + ") is: " + searchFilter.calculateDistance(latitude, longitude));
+                                Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), userId, roomIndex);
                                 roomList.add(roomCard);
-                                Log.d(TAG, "Size RoomList: " + String.valueOf(roomList.size()));
-
-                                roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
-                                        startActivity(intent);
-                                    }
-                                });
-                                recyclerView.setAdapter(roomAdapter);
-                                roomAdapter.notifyDataSetChanged();
+                                setupRoomAdapter();  // Setup the adapter after the roomList is updated
 
                             } catch (Exception e) {
                                 Log.e(TAG, "Error processing dataSnapshot2: " + dataSnapshot2.getKey(), e);
                             }
-
-
                         }
 
                         @Override
@@ -170,20 +132,6 @@ public class ViewRoomActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-                Log.d(TAG, "Outside Size RoomList: " + String.valueOf(roomList.size()));
-                /*roomAdapter = new RoomAdapter(ViewRoomActivity.this, roomList, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new  Intent(ViewRoomActivity.this, AddRoomActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                recyclerView.setAdapter(roomAdapter);
-                roomAdapter.notifyDataSetChanged();*/
-
-                // Log the indexRoomsList to confirm fetching
-                Log.d(TAG, "Firebase IndexRooms: " + indexRoomsList);
             }
 
             @Override
@@ -193,11 +141,31 @@ public class ViewRoomActivity extends AppCompatActivity {
         });
     }
 
-    private int getDistrictIndex(String district) {
-        // Convert the district name to lowercase to make the comparison case-insensitive
-        district = district.toLowerCase().trim();
+    // Setup RecyclerView adapter
+    private void setupRoomAdapter() {
+        if (roomAdapter == null) {
+            roomAdapter = new RoomAdapter(this, roomList, view -> {
+                Intent intent = new Intent(ViewRoomActivity.this, AddRoomActivity.class);
+                startActivityForResult(intent, VIEW_ROOM_DETAIL_REQUEST_CODE);
+            });
+            recyclerView.setAdapter(roomAdapter);
+        } else {
+            roomAdapter.notifyDataSetChanged();  // Notify adapter if data is updated
+        }
+    }
 
-        // Handle Vietnamese and English district names
+    // Handle the result from the AddRoomActivity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VIEW_ROOM_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
+            // The user edited the room, so fetch the data again
+            fetchRoomData();  // Re-fetch the data after returning from detail
+        }
+    }
+
+    private int getDistrictIndex(String district) {
+        district = district.toLowerCase().trim();
         switch (district) {
             case "district 1":
             case "quận 1":
@@ -248,12 +216,7 @@ public class ViewRoomActivity extends AppCompatActivity {
             case "quan 12":
                 return 12;
             default:
-                return -1; // Invalid district
+                return -1;  // Invalid district
         }
-    }
-
-    // Function to dynamically add rooms to the list
-    private void addRoom(String roomName) {
-       // addRoom Act
     }
 }

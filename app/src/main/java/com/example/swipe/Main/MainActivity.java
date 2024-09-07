@@ -18,6 +18,7 @@ import com.example.swipe.Utils.GPS;
 
 import android.telephony.CarrierConfigManager;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -197,7 +198,7 @@ public class MainActivity extends Activity {
                         }
                         // Check condition
 
-                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), idHost);
+                        Cards roomCard = new Cards(DPD, district, roomImageUrl, address, price, searchFilter.calculateDistance(latitude, longitude), idHost, Integer.parseInt(roomSnapshot.getKey()));
                         Log.d(TAG, "Calculate Distance: from (" + searchFilter.getLatitudeUser() + ", " + searchFilter.getLongitudeUser() + ")" + " to ( " + latitude + ", " + longitude + ") is: " + String.valueOf(searchFilter.calculateDistance(latitude, longitude)));
                         rowItems.add(roomCard);
 

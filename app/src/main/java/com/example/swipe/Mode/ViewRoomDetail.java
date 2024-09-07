@@ -3,6 +3,7 @@ package com.example.swipe.Mode;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -31,6 +32,12 @@ import com.bumptech.glide.Glide;
 import com.example.swipe.R;
 import com.example.swipe.Utils.ImagePagerAdapter;
 import com.example.swipe.Utils.SearchFilter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +48,14 @@ public class ViewRoomDetail extends AppCompatActivity {
     private Context mContext;
     ArrayList<String> profileImageUrl;
 
+    // Firebase Variable
+    private FirebaseAuth mAuth;
+    private String userId;
+    private DatabaseReference roomRef;
+    private int index;
+
+    private EditText DPD, profileDistrict, profileAddress, profilePrice;
+    private int price;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,17 +63,16 @@ public class ViewRoomDetail extends AppCompatActivity {
 
         mContext = com.example.swipe.Mode.ViewRoomDetail.this;
 
-        EditText DPD = findViewById(R.id.DPD_beforematch);
-        EditText profileDistrict = findViewById(R.id.District_main);
-        EditText profileAddress = findViewById(R.id.address_beforematch);
-        EditText profilePrice = findViewById(R.id.price_beforematch);
+        DPD = findViewById(R.id.DPD_beforematch);
+        profileDistrict = findViewById(R.id.District_main);
+        profileAddress = findViewById(R.id.address_beforematch);
+        profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
         ImageButton back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-                finish();
             }
         });
 
@@ -66,7 +80,7 @@ public class ViewRoomDetail extends AppCompatActivity {
         Intent intent = getIntent();
         String district = intent.getStringExtra("district");
         String address = intent.getStringExtra("address");
-        int price = intent.getIntExtra("price", 1000);
+        price = intent.getIntExtra("price", 1000);
         double distance = intent.getDoubleExtra("distance", 1.0);
         String description;
         description = intent.getStringExtra("DPD");
@@ -124,16 +138,19 @@ public class ViewRoomDetail extends AppCompatActivity {
         final String pricePrefix = "Price: ";  // Define the prefix
         final String priceHint = "(in 1000 VND unit)";  // Define the hint text
 
+        // Initial setup with the formatted price
         profilePrice.setText(pricePrefix + SearchFilter.getInstance().ManipPrice(price));
 
         profilePrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String currentText = profilePrice.getText().toString();
                 // Remove the "Price: " prefix and show only the price
-                if (profilePrice.getText().toString().startsWith(pricePrefix)) {
+                if (currentText.startsWith(pricePrefix)) {
+                    // Only remove the prefix if it exists
                     profilePrice.setText(String.valueOf(price));  // Show only the price value
-                    profilePrice.setHint(priceHint);  // Show the hint when clicked
                 }
+                profilePrice.setHint(priceHint);  // Show the hint when clicked
             }
         });
 
@@ -141,20 +158,40 @@ public class ViewRoomDetail extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    // When focus is lost, check if the price is empty
+                    // When focus is lost, get the current text and trim spaces
                     String priceText = profilePrice.getText().toString().trim();
 
-                    // Add the "Price: " prefix again if it's not empty and doesn't already start with the prefix
+                    // Check if the price is not empty and does not start with the prefix
                     if (!priceText.isEmpty() && !priceText.startsWith(pricePrefix)) {
-                        profilePrice.setText(pricePrefix + SearchFilter.getInstance().ManipPrice(price));
-                        profilePrice.setHint("");  // Clear the hint after editing is done
+                        try {
+                            // Parse the price
+                            int updatedPrice = Integer.parseInt(priceText);
+                            price = updatedPrice;  // Update the price variable
+
+                            // Set the formatted text with the prefix
+                            String formattedPrice = pricePrefix + SearchFilter.getInstance().ManipPrice(updatedPrice);
+                            profilePrice.setText(formattedPrice);  // Update the EditText with formatted price
+
+                            // Clear focus after updating text (this ensures focus loss is final)
+                            profilePrice.clearFocus();
+
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(ViewRoomDetail.this, "Invalid price format.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (priceText.isEmpty()) {
+                        // Handle the case where the price is empty
+                        profilePrice.setText(pricePrefix + "0");
                     }
+                    profilePrice.setHint("");  // Clear the hint after editing is done
                 } else {
                     // If gaining focus, show the hint
                     profilePrice.setHint(priceHint);
                 }
             }
         });
+
+
+
 
 
         profileImageUrl = intent.getStringArrayListExtra("photo");
@@ -168,17 +205,75 @@ public class ViewRoomDetail extends AppCompatActivity {
             Toast.makeText(this, "No images available", Toast.LENGTH_SHORT).show();
         }
 
+        index = intent.getIntExtra("indexRoom", 0);
+
     }
 
-    public void DislikeBtn(View v) {
-        Intent btnClick = new Intent(mContext, BtnDislikeActivity.class);
-        btnClick.putStringArrayListExtra("url", profileImageUrl);
-        startActivity(btnClick);
+    @Override
+    public void onBackPressed() {
+        // Get the Firebase reference for the current room
+        roomRef = FirebaseDatabase.getInstance().getReference("rooms").child(String.valueOf(index));
+        Log.d("ViewRoomDetail","Enter and change in room: " + index );
+        // Capture the updated values from the fields
+        String updatedDescription = DPD.getText().toString().replace("Description: ", "").trim();
+        if (updatedDescription.equals("No description")) {
+            updatedDescription = null;  // Set to null if "No description"
+        }
+        Log.d("ViewRoomDetail","updatedDescription: " + updatedDescription);
+        String updatedAddress = profileAddress.getText().toString().replace("Address: ", "").trim();
+        Log.d("ViewRoomDetail","updatedAddress: " + updatedAddress);
+        String updatedDistrict = profileDistrict.getText().toString().trim();
+
+        // Update each field individually, with logging
+        roomRef.child("description").setValue(updatedDescription).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("ViewRoomDetail", "Description updated successfully");
+            } else {
+                Log.e("ViewRoomDetail", "Failed to update description", task.getException());
+            }
+        });
+
+        roomRef.child("address").setValue(updatedAddress).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("ViewRoomDetail", "Address updated successfully");
+            } else {
+                Log.e("ViewRoomDetail", "Failed to update address", task.getException());
+            }
+        });
+
+        roomRef.child("district").setValue(updatedDistrict).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("ViewRoomDetail", "District updated successfully");
+            } else {
+                Log.e("ViewRoomDetail", "Failed to update district", task.getException());
+            }
+        });
+
+        roomRef.child("price").setValue(String.valueOf(price)).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d("ViewRoomDetail", "Price updated successfully");
+            } else {
+                Log.e("ViewRoomDetail", "Failed to update price", task.getException());
+            }
+        });
+
+        // Wait for all updates to complete before finishing the activity
+        roomRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("ViewRoomDetail", "Data saved successfully, closing activity");
+                finish();  // Finish the activity only when data is saved
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ViewRoomDetail", "Error updating data", error.toException());
+                Toast.makeText(ViewRoomDetail.this, "Failed to save changes.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        super.onBackPressed();  // Call the default behavior
     }
 
-    public void LikeBtn(View v) {
-        Intent btnClick = new Intent(mContext, BtnLikeActivity.class);
-        btnClick.putStringArrayListExtra("url", profileImageUrl);
-        startActivity(btnClick);
-    }
+
 }
