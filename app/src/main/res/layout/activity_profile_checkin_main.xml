@@ -106,20 +106,6 @@
 
 
                     <ImageButton
-                        android:id="@+id/dislikebtn"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginRight="20dp"
-                        android:background="@drawable/round_button_with_border"
-                        android:elevation="7dp"
-                        android:onClick="DislikeBtn"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_dislike" />
-
-                    <ImageButton
                         android:id="@+id/commentbtn"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
@@ -131,21 +117,6 @@
                         android:elevation="7dp"
                         android:padding="10dp"
                         android:src="@drawable/ic_comment" />
-
-
-                    <ImageButton
-                        android:id="@+id/likebtn"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/round_button_with_border"
-                        android:elevation="7dp"
-                        android:onClick="LikeBtn"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_like1" />
-
 
                 </LinearLayout>
 

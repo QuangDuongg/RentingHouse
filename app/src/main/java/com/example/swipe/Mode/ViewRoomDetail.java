@@ -56,6 +56,7 @@ public class ViewRoomDetail extends AppCompatActivity {
 
     private EditText DPD, profileDistrict, profileAddress, profilePrice;
     private int price;
+    private ImageButton saveButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +77,13 @@ public class ViewRoomDetail extends AppCompatActivity {
             }
         });
 
+        saveButton = findViewById(R.id.save_btn);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveChange();
+            }
+        });
 
         Intent intent = getIntent();
         String district = intent.getStringExtra("district");
@@ -190,10 +198,6 @@ public class ViewRoomDetail extends AppCompatActivity {
             }
         });
 
-
-
-
-
         profileImageUrl = intent.getStringArrayListExtra("photo");
 
 
@@ -209,8 +213,7 @@ public class ViewRoomDetail extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
+    public void saveChange() {
         // Get the Firebase reference for the current room
         roomRef = FirebaseDatabase.getInstance().getReference("rooms").child(String.valueOf(index));
         Log.d("ViewRoomDetail","Enter and change in room: " + index );
@@ -271,7 +274,13 @@ public class ViewRoomDetail extends AppCompatActivity {
                 Toast.makeText(ViewRoomDetail.this, "Failed to save changes.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
 
+
+    @Override
+    public void onBackPressed() {
+
+        saveChange();
         super.onBackPressed();  // Call the default behavior
     }
 
