@@ -98,7 +98,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
                             Intent intent = new Intent(ProfileCheckinMain.this, ChatActivity.class);
                             intent.putExtra("userId", idHost);  // Truyền idHost
                             intent.putExtra("userName", userName);  // Truyền userName
-                            intent.putExtra("messHouse", address+", "+district+", "+" Hồ Chí Minh City "+", giá "+price +"000 VNĐ");  // Truyền userName
+                            intent.putExtra("messHouse","Tôi muốn hỏi về căn nhà địa chỉ "+ address+", "+district+", "+" Hồ Chí Minh City "+", giá "+price +"000 VNĐ");  // Truyền userName
                             // Chuyển sang ChatActivity
                             startActivity(intent);
                         } else {

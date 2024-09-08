@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
                 // Lấy thẻ hiện tại (ở đầu danh sách rowItems)
                 Cards currentCard = rowItems.get(0);  // Thẻ hiện tại
                 String idHost = currentCard.getIdHost();  // Lấy idHost từ thẻ
-                String inforHouse=currentCard.getAddress()+", "+currentCard.getDistrict()+", "+" Hồ Chí Minh City "+", giá "+currentCard.getPrice()+"000 VNĐ";
+                String inforHouse="Tôi muốn hỏi về căn nhà địa chỉ " +currentCard.getAddress()+", "+currentCard.getDistrict()+", "+" Hồ Chí Minh City "+", giá "+currentCard.getPrice()+"000 VNĐ";
                 // Truy vấn Firebase để lấy userName dựa trên idHost
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idHost);
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {

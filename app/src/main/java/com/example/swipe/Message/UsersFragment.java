@@ -78,6 +78,7 @@ public class UsersFragment extends Fragment {
 
     private void startChat(User user) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra("messHouse", "");  // Truyền userName
         intent.putExtra("userId", user.getUserId());
         intent.putExtra("userName", user.getUserName());
         startActivity(intent);
