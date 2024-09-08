@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import com.example.swipe.Message.ChatActivity;
 import com.example.swipe.Utils.GPS;
 
 import android.telephony.CarrierConfigManager;
@@ -22,6 +24,7 @@ import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -77,12 +80,50 @@ public class MainActivity extends Activity {
 
         cardFrame = findViewById(R.id.card_frame);
         moreFrame = findViewById(R.id.more_frame);
+        cmt_btn = findViewById(R.id.comment_btn);
         // start pulsator
         PulsatorLayout mPulsator = findViewById(R.id.pulsator);
         mPulsator.start();
         mNotificationHelper = new NotificationHelper(this);
 
         setupTopNavigationView();
+        cmt_btn.setOnClickListener(v -> {
+            // Kiểm tra nếu còn thẻ trong danh sách
+            if (rowItems.size() > 0) {
+                // Lấy thẻ hiện tại (ở đầu danh sách rowItems)
+                Cards currentCard = rowItems.get(0);  // Thẻ hiện tại
+                String idHost = currentCard.getIdHost();  // Lấy idHost từ thẻ
+
+                // Truy vấn Firebase để lấy userName dựa trên idHost
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idHost);
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Lấy userName từ Firebase
+                            String userName = snapshot.child("username").getValue(String.class);
+
+                            // Tạo Intent để chuyển đến ChatActivity
+                            Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                            intent.putExtra("userId", idHost);  // Truyền idHost
+                            intent.putExtra("userName", userName);  // Truyền userName
+
+                            // Chuyển sang ChatActivity
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error", error.toException());
+                    }
+                });
+            } else {
+                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // get the temporary coordinate
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -136,14 +177,6 @@ public class MainActivity extends Activity {
         rowItems = new ArrayList<Cards>();
         insertFromFirebase();
 
-        cmt_btn = findViewById(R.id.comment_btn);
-        cmt_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String idHost = rowItems.get(currentItemIndex).getIdHost();
-                // LKVuong add Mess
-            }
-        });
     }
 
     private void insertFromFirebase() {
@@ -188,7 +221,7 @@ public class MainActivity extends Activity {
 
                         String idHost = roomSnapshot.child("idHost").getValue(String.class);
                         String address = roomSnapshot.child("address").getValue(String.class);
-                        String DPD = roomSnapshot.child("DPD").getValue(String.class);
+                        String DPD = roomSnapshot.child("description").getValue(String.class);
                         if(DPD == null)
                             DPD = "No description";
                         List<String> roomImageUrl = new ArrayList<>();

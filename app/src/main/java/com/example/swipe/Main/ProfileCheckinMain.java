@@ -10,13 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.example.swipe.Message.ChatActivity;
 import com.example.swipe.R;
 import com.example.swipe.Utils.ImagePagerAdapter;
 import com.example.swipe.Utils.SearchFilter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +33,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
 
     private Context mContext;
     ArrayList<String> profileImageUrl;
-
+    private ImageButton mess_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,16 +48,17 @@ public class ProfileCheckinMain extends AppCompatActivity {
             }
         });
 
+        mess_btn=findViewById(R.id.commentbtn);
         TextView DPD = findViewById(R.id.DPD_beforematch);
         TextView profileDistrict = findViewById(R.id.District_main);
         TextView profileAddress = findViewById(R.id.address_beforematch);
         TextView profilePrice = findViewById(R.id.price_beforematch);
         TextView profileDistance = findViewById(R.id.distance_main);
 
-
         Intent intent = getIntent();
         String district = intent.getStringExtra("district");
         String address = intent.getStringExtra("address");
+        String idHost = intent.getStringExtra("idHost");
         int price = intent.getIntExtra("price", 1000);
         double distance = intent.getDoubleExtra("distance", 1.0);
         String description;
@@ -76,6 +84,35 @@ public class ProfileCheckinMain extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No images available", Toast.LENGTH_SHORT).show();
         }
+        mess_btn.setOnClickListener(v -> {
+
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idHost);
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Lấy userName từ Firebase
+                            String userName = snapshot.child("username").getValue(String.class);
+
+                            // Tạo Intent để chuyển đến ChatActivity
+                            Intent intent = new Intent(ProfileCheckinMain.this, ChatActivity.class);
+                            intent.putExtra("userId", idHost);  // Truyền idHost
+                            intent.putExtra("userName", userName);  // Truyền userName
+
+                            // Chuyển sang ChatActivity
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(ProfileCheckinMain.this, "Error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("kkk", "Error", error.toException());
+                    }
+                });
+
+        });
 
     }
 
