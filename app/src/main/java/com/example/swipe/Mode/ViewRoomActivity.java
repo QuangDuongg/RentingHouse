@@ -101,7 +101,7 @@ public class ViewRoomActivity extends AppCompatActivity {
                                 }
 
                                 String priceString = dataSnapshot2.child("price").getValue(String.class);
-                                int price = Integer.parseInt(priceString);
+                                int price = Integer.parseInt(priceString) / 1000;
                                 if (price > searchFilter.getBudget()) {
                                     Log.d(TAG, "Not valid budget");
                                 }
