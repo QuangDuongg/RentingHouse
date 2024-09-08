@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
                 // Lấy thẻ hiện tại (ở đầu danh sách rowItems)
                 Cards currentCard = rowItems.get(0);  // Thẻ hiện tại
                 String idHost = currentCard.getIdHost();  // Lấy idHost từ thẻ
-
+                String inforHouse=currentCard.getAddress()+", "+currentCard.getDistrict()+", "+" Hồ Chí Minh City "+", "+currentCard.getPrice();
                 // Truy vấn Firebase để lấy userName dựa trên idHost
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(idHost);
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
                             Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                             intent.putExtra("userId", idHost);  // Truyền idHost
                             intent.putExtra("userName", userName);  // Truyền userName
-
+                            intent.putExtra("messHouse", inforHouse);  // Truyền userName
                             // Chuyển sang ChatActivity
                             startActivity(intent);
                         } else {

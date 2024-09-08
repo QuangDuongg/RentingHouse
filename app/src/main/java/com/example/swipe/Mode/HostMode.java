@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swipe.Message.MessageActivity;
@@ -24,6 +28,14 @@ public class HostMode extends AppCompatActivity {
         btn_message=findViewById(R.id.button_message);
         buttonViewRoom = findViewById(R.id.button_view_room);
         btnprofile=findViewById(R.id.button_profile);
+        // Tìm TextView "Quản lý phòng"
+        TextView titleText = findViewById(R.id.title);
+
+        // Tải animation mờ dần vào ra lặp lại
+        Animation fadeInOut = AnimationUtils.loadAnimation(this, R.anim.fade_in_out);
+
+        // Áp dụng animation vào TextView
+        titleText.startAnimation(fadeInOut);
         buttonViewRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

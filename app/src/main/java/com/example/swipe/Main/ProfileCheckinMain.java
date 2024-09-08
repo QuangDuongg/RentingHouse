@@ -59,7 +59,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
         String district = intent.getStringExtra("district");
         String address = intent.getStringExtra("address");
         String idHost = intent.getStringExtra("idHost");
-        int price = intent.getIntExtra("price", 1000);
+        int price = intent.getIntExtra("price",1 );
         double distance = intent.getDoubleExtra("distance", 1.0);
         String description;
         description = intent.getStringExtra("DPD");
@@ -98,7 +98,7 @@ public class ProfileCheckinMain extends AppCompatActivity {
                             Intent intent = new Intent(ProfileCheckinMain.this, ChatActivity.class);
                             intent.putExtra("userId", idHost);  // Truyền idHost
                             intent.putExtra("userName", userName);  // Truyền userName
-
+                            intent.putExtra("messHouse", address+", "+district+", "+" Hồ Chí Minh City "+", "+price);  // Truyền userName
                             // Chuyển sang ChatActivity
                             startActivity(intent);
                         } else {

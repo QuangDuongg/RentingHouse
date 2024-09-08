@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "Check toolbar");
         SearchFilter searchFilter = SearchFilter.getInstance();
         TextView toolbar = findViewById(R.id.toolbartag);
-        toolbar.setText("Profile");
+        toolbar.setText("Search criteria");
         Log.d(TAG, "Check back btn");
         ImageButton back = findViewById(R.id.back);
         Log.d(TAG, "Check man/woman bar");

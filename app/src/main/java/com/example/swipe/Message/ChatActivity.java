@@ -72,6 +72,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // Lấy thông tin từ intent
         String userId = getIntent().getStringExtra("userId");
+        String messHouse= getIntent().getStringExtra("messHouse");
         receiverName = getIntent().getStringExtra("userName");
 
         // Hiển thị tên người nhận trên Toolbar
@@ -93,6 +94,10 @@ public class ChatActivity extends AppCompatActivity {
 
         // Tải danh sách tin nhắn
         loadMessages();
+        if(!messHouse.isEmpty())
+        {
+            messageEditText.setText(messHouse);
+        }
     }
 
     // Tải thông tin người nhận (người mà bạn đang chat)

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="0dp">
+    android:background="@drawable/gradient_backgroud"
+    android:layout_height="match_parent">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -12,54 +12,80 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/ToolbarTheme"
         android:titleTextColor="@android:color/white"
-        android:elevation="4dp"/>
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:layout_gravity="top"/>
 
-    <Spinner
-        android:id="@+id/spinner_district"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="?attr/actionBarSize">
 
-    <EditText
-        android:id="@+id/edit_text_price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter room price"
-        android:inputType="number"
-        android:layout_marginTop="16dp" />
+        <Spinner
+            android:id="@+id/spinner_district"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/spinner_background"
+            android:padding="8dp"/>
 
-    <EditText
-        android:id="@+id/edit_text_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter specific address"
-        android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/edit_text_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter room price"
+            android:inputType="number"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"/>
 
-    <EditText
-        android:id="@+id/edit_text_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter room description"
-        android:layout_marginTop="16dp"/>
+        <EditText
+            android:id="@+id/edit_text_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter specific address"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"/>
 
-    <Button
-        android:id="@+id/button_choose_images"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Choose image"
-        android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/edit_text_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter room description"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp"/>
+        <Button
+            android:id="@+id/button_choose_images"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose image"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_background"
+            android:textColor="@android:color/white"
+            android:padding="12dp"/>
 
-    <Button
-        android:id="@+id/button_done"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:layout_marginTop="16dp" />
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"/>
+
+        <Button
+            android:id="@+id/button_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_background"
+            android:textColor="@android:color/white"
+            android:padding="12dp"/>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
