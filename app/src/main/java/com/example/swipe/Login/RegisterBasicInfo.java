@@ -195,7 +195,7 @@ public class RegisterBasicInfo extends AppCompatActivity {
     }
 
     public void onLoginClicked(View view) {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(getApplicationContext(), Login.class));
         mContext = RegisterBasicInfo.this;
     }
 
