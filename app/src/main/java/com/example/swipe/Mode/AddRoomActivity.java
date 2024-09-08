@@ -112,7 +112,6 @@ public class AddRoomActivity extends AppCompatActivity {
 
         buttonDone.setOnClickListener(v -> {
             saveRoomData();
-            startActivity(new Intent(AddRoomActivity.this, ViewRoomActivity.class));
         });
     }
 
@@ -219,16 +218,38 @@ public class AddRoomActivity extends AppCompatActivity {
         });
 
         // Lưu hình ảnh
+        final int totalImages = imageUriList.size();
+        final int[] uploadedImages = {0};
+
         for (Uri imageUri : imageUriList) {
             String fileName = "image_" + System.currentTimeMillis() + ".jpg";
             StorageReference storageRef = firebaseStorage.getReference().child("rooms/" + roomId + "/" + fileName);
 
             storageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> roomRef.child("imageUrls").push().setValue(uri.toString())))
-                    .addOnFailureListener(e -> Toast.makeText(AddRoomActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show());
+                    .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                roomRef.child("imageUrls").push().setValue(uri.toString());
+                                uploadedImages[0]++;
+                                if (uploadedImages[0] == totalImages) {
+                                    // All images are uploaded
+                                    navigateToViewRoomActivity();
+                                }
+                            }))
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(AddRoomActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                        // You might want to handle the failure case here
+                    });
         }
-    }
 
+        // If there are no images, just navigate to the next activity
+        if (totalImages == 0) {
+            navigateToViewRoomActivity();
+        }
+
+    }
+    private void navigateToViewRoomActivity() {
+        startActivity(new Intent(AddRoomActivity.this, ViewRoomActivity.class));
+    }
 
 
     // Sử dụng Geocoder để lấy tọa độ từ địa chỉ
