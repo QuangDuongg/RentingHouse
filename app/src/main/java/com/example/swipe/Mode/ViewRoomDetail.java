@@ -265,6 +265,10 @@ public class ViewRoomDetail extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("ViewRoomDetail", "Data saved successfully, closing activity");
+
+                Intent resultIntent = new Intent(ViewRoomDetail.this, ViewRoomActivity.class);
+                startActivity(resultIntent);
+
                 finish();  // Finish the activity only when data is saved
             }
 
@@ -279,8 +283,6 @@ public class ViewRoomDetail extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        saveChange();
         super.onBackPressed();  // Call the default behavior
     }
 

@@ -48,7 +48,13 @@ public class ViewRoomActivity extends AppCompatActivity {
         searchFilter = SearchFilter.getInstance();
 
         ImageButton back = findViewById(R.id.back);
-        back.setOnClickListener(v -> onBackPressed());
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent  = new Intent(ViewRoomActivity.this, HostMode.class);
+                startActivity(intent);
+            }
+        });
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewRoom);
@@ -152,6 +158,7 @@ public class ViewRoomActivity extends AppCompatActivity {
                 Intent intent = new Intent(ViewRoomActivity.this, AddRoomActivity.class);
                 startActivityForResult(intent, VIEW_ROOM_DETAIL_REQUEST_CODE);
             });
+
             recyclerView.setAdapter(roomAdapter);
         } else {
             roomAdapter.notifyDataSetChanged();  // Notify adapter if data is updated
@@ -162,9 +169,12 @@ public class ViewRoomActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("ViewRoomActivity", "Jump Result");
         if (requestCode == VIEW_ROOM_DETAIL_REQUEST_CODE && resultCode == RESULT_OK) {
             // The user edited the room, so fetch the data again
+            Log.d("ViewRoomActivity", "Fetch Room again");
             fetchRoomData();  // Re-fetch the data after returning from detail
+            setupRoomAdapter();
         }
     }
 
