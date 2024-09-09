@@ -83,6 +83,10 @@ public class ViewRoomActivity extends AppCompatActivity {
 
                 DatabaseReference roomsRef = FirebaseDatabase.getInstance().getReference("rooms");
                 roomList.clear(); // Clear the list before refilling it
+                if(indexRoomsList.isEmpty())
+                {
+                    setupRoomAdapter();
+                }
                 for (int roomIndex : indexRoomsList) {
                     roomsRef.child(String.valueOf(roomIndex)).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

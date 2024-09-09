@@ -1,17 +1,15 @@
 package com.example.swipe.Mode;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.swipe.Main.Cards;
-import com.example.swipe.Main.ProfileCheckinMain;
 import com.example.swipe.R;
-
 import java.util.List;
-
 import android.widget.Button;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +29,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public RoomAdapter(Context context, List<Cards> roomList, View.OnClickListener addButtonClickListener) {
         this.mContext = context;
-        this.roomList = roomList;
+        this.roomList = roomList != null ? roomList : new ArrayList<>(); // Ensure non-null roomList
         this.addButtonClickListener = addButtonClickListener;
     }
 
@@ -48,10 +46,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
+            Log.d("RoomAdapter", "Creating HeaderViewHolder");
             // Inflate header layout (Button layout)
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_room_button, parent, false);
             return new HeaderViewHolder(view);
         } else {
+            Log.d("RoomAdapter", "Creating ItemViewHolder");
             // Inflate room item layout
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_room, parent, false);
             return new ItemViewHolder(view);
@@ -61,48 +61,54 @@ public class RoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
-            // Set click listener for the button
             ((HeaderViewHolder) holder).addButton.setOnClickListener(addButtonClickListener);
+            // Debugging log for header binding
+            Log.d("RoomAdapter", "HeaderViewHolder bound at position " + position);
         } else if (holder instanceof ItemViewHolder) {
-            final Cards card_item = roomList.get(position - 1); // Adjust for header at position 0
+            if (!roomList.isEmpty()) {
+                final Cards card_item = roomList.get(position - 1); // Adjust for header at position 0
+                ((ItemViewHolder) holder).name.setText(card_item.getDistrict() + ", " + card_item.getDistance() + " km");
 
-            ((ItemViewHolder) holder).name.setText(card_item.getDistrict() + ",              " + card_item.getDistance() + " km");
-
-            ((ItemViewHolder) holder).btnInfo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ViewRoomDetail.class);
-                    intent.putExtra("district", card_item.getDistrict());
-                    if (card_item.isAnyImageRoom()) {
-                        ArrayList<String> roomImageUrls = new ArrayList<>(card_item.getRoomImageUrl());
-                        intent.putStringArrayListExtra("photo", roomImageUrls);
+                // Setting onClickListener for button to show room details
+                ((ItemViewHolder) holder).btnInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, ViewRoomDetail.class);
+                        intent.putExtra("district", card_item.getDistrict());
+                        if (card_item.isAnyImageRoom()) {
+                            ArrayList<String> roomImageUrls = new ArrayList<>(card_item.getRoomImageUrl());
+                            intent.putStringArrayListExtra("photo", roomImageUrls);
+                        }
+                        intent.putExtra("address", card_item.getAddress());
+                        intent.putExtra("price", card_item.getPrice());
+                        intent.putExtra("distance", card_item.getDistance());
+                        intent.putExtra("DPD", card_item.getDPD());
+                        intent.putExtra("indexRoom", card_item.getIndexRoom());
+                        mContext.startActivity(intent);
                     }
-                    intent.putExtra("address", card_item.getAddress());
-                    intent.putExtra("price", card_item.getPrice());
-                    intent.putExtra("distance", card_item.getDistance());
-                    intent.putExtra("DPD", card_item.getDPD());
-                    intent.putExtra("indexRoom", card_item.getIndexRoom());
-                    mContext.startActivity(intent);
-                }
-            });
+                });
 
-            if (card_item.getRoomImageUrl() != null && !card_item.getRoomImageUrl().isEmpty()) {
-                String imageUrl = card_item.getRoomImageUrl().get(0);
-                if (imageUrl.equals("defaultRoom")) {
-                    Glide.with(mContext).load(R.drawable.default_man).into(((ItemViewHolder) holder).image);
+                // Load the room image with Glide
+                if (card_item.getRoomImageUrl() != null && !card_item.getRoomImageUrl().isEmpty()) {
+                    String imageUrl = card_item.getRoomImageUrl().get(0);
+                    if (imageUrl.equals("defaultRoom")) {
+                        Glide.with(mContext).load(R.drawable.default_man).into(((ItemViewHolder) holder).image);
+                    } else {
+                        Glide.with(mContext).load(imageUrl).into(((ItemViewHolder) holder).image);
+                    }
                 } else {
-                    Glide.with(mContext).load(imageUrl).into(((ItemViewHolder) holder).image);
+                    Glide.with(mContext).load(R.drawable.default_man).into(((ItemViewHolder) holder).image); // Fallback image
                 }
-            } else {
-                Glide.with(mContext).load(R.drawable.default_man).into(((ItemViewHolder) holder).image); // Fallback image
             }
+            // Debugging log for item binding
+           Log.d("RoomAdapter", "ItemViewHolder bound at position " + position);
         }
     }
 
     @Override
     public int getItemCount() {
         // Room list + 1 for the header
-        return roomList.size() + 1;
+        return roomList.isEmpty() ? 1 : roomList.size() + 1;
     }
 
     // ViewHolder for header (Button)
