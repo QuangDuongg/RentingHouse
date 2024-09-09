@@ -252,7 +252,7 @@ public class ViewRoomDetail extends AppCompatActivity {
             }
         });
 
-        roomRef.child("price").setValue(String.valueOf(price)).addOnCompleteListener(task -> {
+        roomRef.child("price").setValue(String.valueOf(price * 1000)).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.d("ViewRoomDetail", "Price updated successfully");
             } else {
