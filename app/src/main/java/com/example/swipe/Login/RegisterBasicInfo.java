@@ -198,6 +198,10 @@ public class RegisterBasicInfo extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), Login.class));
         mContext = RegisterBasicInfo.this;
     }
+    public void onForgotClicked(View view) {
+        startActivity(new Intent(getApplicationContext(), ForgotPasswordActivity.class));
+        mContext = RegisterBasicInfo.this;
+    }
 
     public void showToast(String str) {
         Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();

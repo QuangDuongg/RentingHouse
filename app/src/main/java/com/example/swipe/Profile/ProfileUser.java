@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.swipe.Login.ChangePasswordActivity;
 import com.example.swipe.Login.Login;
 import com.example.swipe.Main.MainActivity;
 import com.example.swipe.Message.MessageActivity;
@@ -37,7 +38,7 @@ public class ProfileUser extends AppCompatActivity {
 
     private ImageView profileImage;
     private TextView usernameText, email_text;
-    private Button personalInfoButton, logoutButton, backtomain;
+    private Button personalInfoButton, logoutButton, backtomain,changepassword;
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
     private StorageReference storageRef;
@@ -54,6 +55,7 @@ public class ProfileUser extends AppCompatActivity {
         backtomain = findViewById(R.id.btn_backtomain);
         profileImage = findViewById(R.id.profile_image);
         usernameText = findViewById(R.id.username_text);
+        changepassword=findViewById(R.id.button2);
         personalInfoButton = findViewById(R.id.button_personal_info);
         logoutButton = findViewById(R.id.button_logout);
 
@@ -70,6 +72,13 @@ public class ProfileUser extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileUser.this, PersonalInforActivity.class);
+                startActivity(intent);
+            }
+        });
+        changepassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileUser.this, ChangePasswordActivity.class);
                 startActivity(intent);
             }
         });

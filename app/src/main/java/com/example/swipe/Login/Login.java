@@ -110,6 +110,15 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        TextView linkForgot = findViewById(R.id.link_forgot);
+        linkForgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to register screen");
+                Intent intent = new Intent(Login.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void checkUserRole(String userId) {

@@ -28,9 +28,9 @@
     <string name="permision_available_camera">camera available</string>
     <string name="host">Host</string>
     <string name="tenant">Tenant</string>
-    <string name="entry_your_email">entry your Email</string>
-    <string name="enter_your_username">enter your username</string>
-    <string name="enter_your_password">enter your Password</string>
+    <string name="entry_your_email">Enter your email</string>
+    <string name="enter_your_username">Enter your username</string>
+    <string name="enter_your_password">Enter your password</string>
     <string name="no_descriptiion">No Descriptiion</string>
 
     <!-- introduction pictures-->

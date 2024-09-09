@@ -104,7 +104,7 @@
                         android:drawableStart="@drawable/ic_2"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
-                        android:text="Account Settings"
+                        android:text="Change password"
                         android:textAlignment="viewStart" />
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/button_personal_info"

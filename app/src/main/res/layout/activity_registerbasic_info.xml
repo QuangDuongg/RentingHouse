@@ -162,13 +162,34 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/link_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:onClick="onLoginClicked"
-                android:padding="15dp"
-                android:text="Existing User? Please Login" />
+                android:layout_above="@id/link_forgot"
+                android:layout_marginBottom="0dp"
+            android:onClick="onLoginClicked"
+            android:padding="10dp"
+            android:text="Existing User? Please Login"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/link_forgot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="0dp"
+            android:onClick="onForgotClicked"
+            android:padding="10dp"
+            android:text="Forgot password?"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
 
         </RelativeLayout>
     </ScrollView>
